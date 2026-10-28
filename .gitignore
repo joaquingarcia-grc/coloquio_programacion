@@ -1,0 +1,39 @@
+# Entorno (claves, base de datos, etc.)
+.env
+
+# Cosas de writable que cambian todo el tiempo
+writable/cache/*
+!writable/cache/index.html
+!writable/cache/.htaccess
+
+writable/debugbar/*
+!writable/debugbar/index.html
+!writable/debugbar/.htaccess
+
+writable/logs/*
+!writable/logs/index.html
+!writable/logs/.htaccess
+
+writable/session/*
+!writable/session/index.html
+!writable/session/.htaccess
+
+writable/uploads/*
+!writable/uploads/index.html
+!writable/uploads/.htaccess
+
+# Dependencias
+vendor/
+node_modules/
+
+# Editores y sistema
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Tests / coverage
+build/
+coverage/
+phpunit*.xml
