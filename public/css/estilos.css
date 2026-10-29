@@ -1,0 +1,200 @@
+:root {
+    --color-principal: #6c5ce7;
+    --color-barra: #1e1f2b;
+    --color-lateral: #252736;
+    --color-texto: #c9cbe0;
+    --color-hover: #2f3146;
+    --ancho-lateral: 240px;
+    --alto-barra: 60px;
+}
+
+body {
+    margin: 0;
+    background: #f4f5fa;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* ---------- Barra superior ---------- */
+.barra-superior {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--alto-barra);
+    background: var(--color-barra);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.2rem;
+    z-index: 1030;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.marca {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    width: calc(var(--ancho-lateral) - 1.2rem);
+}
+
+.boton-menu {
+    background: none;
+    border: none;
+    color: var(--color-texto);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+}
+
+.boton-menu:hover {
+    background: var(--color-hover);
+    color: #fff;
+}
+
+.buscador {
+    display: flex;
+}
+
+.buscador input {
+    background: var(--color-lateral);
+    border: 1px solid transparent;
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px 0 0 6px;
+    outline: none;
+}
+
+.buscador input:focus {
+    border-color: var(--color-principal);
+}
+
+.buscador button {
+    background: var(--color-principal);
+    border: none;
+    color: #fff;
+    padding: 0 0.9rem;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+}
+
+.usuario a {
+    color: var(--color-texto);
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.usuario a:hover {
+    color: #fff;
+}
+
+/* ---------- Barra lateral ---------- */
+.barra-lateral {
+    position: fixed;
+    top: var(--alto-barra);
+    left: 0;
+    bottom: 0;
+    width: var(--ancho-lateral);
+    background: var(--color-lateral);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+    transition: transform 0.25s ease;
+    z-index: 1020;
+}
+
+.menu {
+    padding: 1rem 0.7rem;
+}
+
+.menu-titulo {
+    color: #7f82a3;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 1rem 0.6rem 0.4rem;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--color-texto);
+    text-decoration: none;
+    padding: 0.55rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.92rem;
+}
+
+.menu-link i:first-child {
+    width: 18px;
+    text-align: center;
+}
+
+.menu-link:hover {
+    background: var(--color-hover);
+    color: #fff;
+}
+
+.menu-link .flecha {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.menu-link:not(.collapsed) .flecha {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    margin-left: 1rem;
+    padding-left: 0.5rem;
+    border-left: 1px solid var(--color-hover);
+}
+
+.pie-lateral {
+    background: var(--color-barra);
+    color: #fff;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+.pie-lateral small {
+    color: #7f82a3;
+}
+
+/* ---------- Contenido ---------- */
+.contenido {
+    margin-left: var(--ancho-lateral);
+    padding: calc(var(--alto-barra) + 1.5rem) 1.5rem 1.5rem;
+    transition: margin-left 0.25s ease;
+}
+
+/* ---------- Escritorio: el botón oculta la lateral ---------- */
+body.menu-toggle .barra-lateral {
+    transform: translateX(-100%);
+}
+
+body.menu-toggle .contenido {
+    margin-left: 0;
+}
+
+/* ---------- Celular: lateral oculta, el botón la muestra ---------- */
+@media (max-width: 991px) {
+    .barra-lateral {
+        transform: translateX(-100%);
+    }
+
+    .contenido {
+        margin-left: 0;
+    }
+
+    body.menu-toggle .barra-lateral {
+        transform: translateX(0);
+    }
+
+    .marca {
+        width: auto;
+    }
+}

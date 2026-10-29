@@ -3,4 +3,4 @@
 use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
-$routes->get('/', 'Cine::index');
+$routes->get('/', 'Salari::index');
