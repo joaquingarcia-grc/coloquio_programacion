@@ -26,7 +26,13 @@
             </ul>
         </div>
     </header>
-    <main class="contenido" id="ctnEmpleado"></main>
+    <!-- un solo main, adentro van el formulario y la tabla -->
+    <main class="contenido">
+        <!-- aca aparecen los formularios (arriba), vacio no ocupa nada -->
+        <div id="ctnEmpleado"></div>
+        <!-- la tabla queda arriba y se corre para abajo cuando aparece un formulario -->
+        <div id="ctnEmpleado2"></div>
+    </main>
     <!-- Barra lateral -->
     <aside class="barra-lateral" id="menuLateral">
         <nav class="menu" id="menuAcordeon">
@@ -38,6 +44,14 @@
                 <button type="button" class="menu-link" id="crgLiquidacion">
                     <i class="fas fa-file-invoice-dollar"></i> Generar liquidación
                 </button>
+
+                <div class="menu-titulo">Listas</div>
+                <button type="button" class="menu-link" id="verListaEmpleados">
+                    <i class="fas fa-users"></i> Lista de empleados
+                </button>
+                <button type="button" class="menu-link" id="verListaLiquidaciones">
+                    <i class="fas fa-list"></i> Lista de liquidaciones
+                </button>
             </div>
         </nav>
         <div class="pie-lateral">
@@ -45,6 +59,19 @@
             <div id="nombreUsuario">Usuario</div>
         </div>
     </aside>
+    <!-- modal para ver el detalle de empleado o liquidacion -->
+    <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDetalleTitulo"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalDetalleCuerpo"></div>
+                <div class="modal-footer" id="modalDetallePie"></div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>

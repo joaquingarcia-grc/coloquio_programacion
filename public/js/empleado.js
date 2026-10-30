@@ -267,58 +267,156 @@ $(document).ready(function(){
         instancia.show();
     }
 
-    // pide los empleados a la api y los dibuja en la pagina
-    function cargarDatos() {
+    // cuando aprieto el boton de lista de liquidaciones, pide las liquidaciones a la api y las dibuja en una tabla
+    $('#verListaLiquidaciones').on('click', function () {
         $.ajax({
-            url: BASE + 'empleados/api',
+            url: BASE + 'liquidaciones/api',
             method: 'GET',
             dataType: 'json',
             success: function (response) {
-                let contEmpleados = '<div class="row g-3">';
-                response.empleados.forEach(empelado=>{   
-                    contEmpleados+= `
-                            <!-- una columna por cada empleado -->
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            <i class="fas fa-user"></i>${empelado.denominacion}
-                                        </h5>
-                                        <p class="card-text mb-1">
-                                            <i class="fas fa-envelope"></i>${empelado.correo}
-                                        </p>
-                                        <p class="card-text mb-1">
-                                            <i class="fas fa-briefcase"></i>${empelado.area}
-                                        </p>
-                                        <p class="card-text text-muted">
-                                            <small><i class="fas fa-user-check"></i> Cargado por:${empelado.cargado_por}</small>
-                                        </p>
-                                    </div>
-                                    <div class="card-footer text-end">
-                                        <button type="button" class="btn btn-sm btn-outline-primary me-1 btn-editar" data-id="${empelado.id}">
-                                            <i class="fas fa-pen"></i>
+                let contLiquidaciones = `
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Cargado por</th>
+                                    <th>Empleado</th>
+                                    <th>Fecha de liquidación</th>
+                                    <th>Monto</th>
+                                    <th>Fecha emitido</th>
+                                    <th class="text-end">Ver</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                response.liquidaciones.forEach(liquidacion => {
+                    // una fila por cada liquidacion
+                    contLiquidaciones += `
+                                <tr>
+                                    <td>${liquidacion.cargado_por}</td>
+                                    <td><i class="fas fa-user"></i> ${liquidacion.empleado}</td>
+                                    <td>${liquidacion.fecha_liquidacion}</td>
+                                    <td>$ ${liquidacion.monto}</td>
+                                    <td>${liquidacion.fecha_alta}</td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" id="verLiquidacion_${liquidacion.id}" data-empleado="${liquidacion.empleado}" data-cargado="${liquidacion.cargado_por}" data-fecha="${liquidacion.fecha_liquidacion}" data-monto="${liquidacion.monto}" data-emitido="${liquidacion.fecha_alta}">
+                                            <i class="fas fa-eye"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger btn-borrar" data-id="${empelado.id}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>`;
+                                    </td>
+                                </tr>`;
                 });
-                contEmpleados+= '</div>';
-                $('#ctnEmpleado').html(contEmpleados);
+                contLiquidaciones += `
+                            </tbody>
+                        </table>
+                    </div>`;
+                $('#ctnEmpleado2').html(contLiquidaciones);
             },
             error: function () {
                 mensajes('Error en el servidor', 'error');
             }
         });
-    }
+    });
 
-    // muestra los botones de carga y trae los datos del usuario
+    // cuando aprieto el boton de lista de empleados, pide los empleados a la api y los dibuja en una tabla
+    $('#verListaEmpleados').on('click', function () {
+        $.ajax({
+            url: BASE + 'empleados/api',
+            method: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                let contEmpleados = `
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Denominación</th>
+                                    <th>Correo</th>
+                                    <th>Área</th>
+                                    <th>Cargado por</th>
+                                    <th class="text-end">Ver</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                response.empleados.forEach(empleado => {
+                    // una fila por cada empleado
+                    contEmpleados += `
+                                <tr>
+                                    <td><i class="fas fa-user"></i> ${empleado.denominacion}</td>
+                                    <td>${empleado.correo}</td>
+                                    <td>${empleado.area}</td>
+                                    <td>${empleado.cargado_por}</td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" id="verEmpleado_${empleado.id}" data-denominacion="${empleado.denominacion}" data-correo="${empleado.correo}" data-area="${empleado.area}" data-cargado="${empleado.cargado_por}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>`;
+                });
+                contEmpleados += `
+                            </tbody>
+                        </table>
+                    </div>`;
+                $('#ctnEmpleado2').html(contEmpleados);
+            },
+            error: function () {
+                mensajes('Error en el servidor', 'error');
+            }
+        });
+    });
+    // ojito de empleado: abre el modal con los datos del empleado
+    $('#ctnEmpleado2').on('click', '[id^="verEmpleado_"]', function () {
+        var id = this.id.replace('verEmpleado_', '');
+        $('#modalDetalleTitulo').html('<i class="fas fa-user"></i> Datos del empleado');
+        $('#modalDetalleCuerpo').html(`
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Nombre</dt>
+                <dd class="col-sm-8">${$(this).data('denominacion')}</dd>
+                <dt class="col-sm-4">Correo</dt>
+                <dd class="col-sm-8">${$(this).data('correo')}</dd>
+                <dt class="col-sm-4">Área</dt>
+                <dd class="col-sm-8">${$(this).data('area')}</dd>
+                <dt class="col-sm-4">Cargado por</dt>
+                <dd class="col-sm-8">${$(this).data('cargado')}</dd>
+            </dl>`);
+        $('#modalDetallePie').html(`
+            <button type="button" class="btn btn-outline-primary" id="editarEmpleado" data-id="${id}">
+                <i class="fas fa-pen"></i> Editar
+            </button>
+            <button type="button" class="btn btn-outline-danger" id="borrarEmpleado" data-id="${id}">
+                <i class="fas fa-trash"></i> Borrar
+            </button>`);
+        bootstrap.Modal.getOrCreateInstance($('#modalDetalle')[0]).show();
+    });
+
+    // ojito de liquidacion: abre el modal con los datos de la liquidacion
+    $('#ctnEmpleado2').on('click', '[id^="verLiquidacion_"]', function () {
+        var id = this.id.replace('verLiquidacion_', '');
+        $('#modalDetalleTitulo').html('<i class="fas fa-file-invoice-dollar"></i> Datos de la liquidación');
+        $('#modalDetalleCuerpo').html(`
+            <dl class="row mb-0">
+                <dt class="col-sm-5">Empleado</dt>
+                <dd class="col-sm-7">${$(this).data('empleado')}</dd>
+                <dt class="col-sm-5">Cargado por</dt>
+                <dd class="col-sm-7">${$(this).data('cargado')}</dd>
+                <dt class="col-sm-5">Fecha de liquidación</dt>
+                <dd class="col-sm-7">${$(this).data('fecha')}</dd>
+                <dt class="col-sm-5">Monto</dt>
+                <dd class="col-sm-7">$ ${$(this).data('monto')}</dd>
+                <dt class="col-sm-5">Fecha emitido</dt>
+                <dd class="col-sm-7">${$(this).data('emitido')}</dd>
+            </dl>`);
+        $('#modalDetallePie').html(`
+            <button type="button" class="btn btn-outline-primary" id="editarLiquidacion" data-id="${id}">
+                <i class="fas fa-pen"></i> Editar
+            </button>
+            <button type="button" class="btn btn-outline-danger" id="borrarLiquidacion" data-id="${id}">
+                <i class="fas fa-trash"></i> Borrar
+            </button>`);
+        bootstrap.Modal.getOrCreateInstance($('#modalDetalle')[0]).show();
+    });
+
     function mostrarSesion(usuario) {
         $('#opcionesSesion').removeClass('d-none');
         $('#nombreUsuario').text(usuario);
-        cargarDatos();
     }
 
     // al cargar la pagina pregunto si ya hay sesion (por si recargó)

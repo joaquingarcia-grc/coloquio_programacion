@@ -236,6 +236,11 @@ body {
     transition: margin-left var(--transicion);
 }
 
+/* separa el formulario de la tabla solo cuando hay un formulario cargado */
+#ctnEmpleado:not(:empty) {
+    margin-bottom: 2rem;
+}
+
 /* ---------- Tarjeta del formulario ---------- */
 .tarjeta-formulario {
     position: relative;
@@ -426,6 +431,7 @@ body.menu-toggle .contenido {
         width: 100%;
     }
 }
+
 .tarjeta-login {
     max-width: 420px;
 }
