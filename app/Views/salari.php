@@ -11,7 +11,7 @@
 <body>
     <!-- Barra superior -->
     <header class="barra-superior">
-        <a class="marca" href="index.html">Panel Administrativo</a>
+        <a class="marca" href='<?php echo base_url()?>'>Panel Administrativo</a>
         <button class="boton-menu" id="botonMenu" type="button">
             <i class="fas fa-bars"></i>
         </button>
@@ -20,28 +20,37 @@
                 <i class="fas fa-user"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Loguearse</a></li>
+                <li><button class="dropdown-item" id='formuLogueo'>Loguearse</button></li>
+                <li><button class="dropdown-item"  id="btnRegistro">Registrarse</button></li>
                 <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
             </ul>
         </div>
     </header>
+    <main class="contenido" id="ctnEmpleado"></main>
     <!-- Barra lateral -->
     <aside class="barra-lateral" id="menuLateral">
         <nav class="menu" id="menuAcordeon">
-            <div class="menu-titulo">Empelado</div>
-            <a class="menu-link" href="<?php echo base_url()?>usuarios/nuevo">
-                <i class="fas fa-user-plus"></i> Cargar empleado
-            </a>
-            <a class="menu-link" href="<?php echo base_url()?>liquidaciones/nueva">
-                <i class="fas fa-file-invoice-dollar"></i> Generar liquidación
-            </a>
+            <div id="opcionesSesion" class="d-none">
+                <div class="menu-titulo">Empleado</div>
+                <button type="button" class="menu-link" id="crgEmpleado">
+                    <i class="fas fa-user-plus"></i> Cargar empleado
+                </button>
+                <button type="button" class="menu-link" id="crgLiquidacion">
+                    <i class="fas fa-file-invoice-dollar"></i> Generar liquidación
+                </button>
+            </div>
         </nav>
         <div class="pie-lateral">
             <small>Sesión iniciada como:</small>
-            <div>Usuario</div>
+            <div id="nombreUsuario">Usuario</div>
         </div>
     </aside>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src='<?php echo base_url()?>js/script.js'></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        const BASE = "<?php echo base_url();?>"
+    </script> 
+    <script src='<?php echo base_url();?>js/empleado.js'></script>
+    <script src='<?php echo base_url();?>js/script.js'></script>
 </body>
 </html>

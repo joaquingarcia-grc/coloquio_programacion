@@ -1,17 +1,26 @@
 :root {
-    --color-principal: #6c5ce7;
-    --color-barra: #1e1f2b;
-    --color-lateral: #252736;
-    --color-texto: #c9cbe0;
-    --color-hover: #2f3146;
-    --ancho-lateral: 240px;
-    --alto-barra: 60px;
+    --color-primario: #4f46e5;
+    --color-primario-suave: rgba(79, 70, 229, 0.15);
+    --color-fondo: #f3f4f8;
+    --color-superior: #2a2750;
+    --color-lateral: #1e1b3a;
+    --color-lateral-texto: #c7c9e0;
+    --color-lateral-titulo: #7c7fa8;
+    --color-hover: rgba(255, 255, 255, 0.08);
+    --alto-superior: 60px;
+    --ancho-lateral: 260px;
+    --transicion: 0.25s ease;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    background: #f4f5fa;
-    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: var(--color-fondo);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: #2b2d42;
 }
 
 /* ---------- Barra superior ---------- */
@@ -20,37 +29,46 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: var(--alto-barra);
-    background: var(--color-barra);
+    height: var(--alto-superior);
+    background: var(--color-superior);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0 1.2rem;
+    gap: 14px;
+    padding: 0 20px;
     z-index: 1030;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .marca {
-    color: #fff;
     font-size: 1.2rem;
-    font-weight: 600;
+    font-weight: 700;
+    color: #ffffff;
     text-decoration: none;
-    width: calc(var(--ancho-lateral) - 1.2rem);
+    letter-spacing: 0.3px;
+    width: calc(var(--ancho-lateral) - 60px);
+}
+
+.marca:hover {
+    color: #c7c9e0;
 }
 
 .boton-menu {
-    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-hover);
+    color: #ffffff;
     border: none;
-    color: var(--color-texto);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     font-size: 1.1rem;
     cursor: pointer;
-    padding: 0.4rem 0.6rem;
-    border-radius: 6px;
+    transition: background var(--transicion);
 }
 
 .boton-menu:hover {
-    background: var(--color-hover);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .buscador {
@@ -62,37 +80,66 @@ body {
     border: 1px solid transparent;
     color: #fff;
     padding: 0.4rem 0.8rem;
-    border-radius: 6px 0 0 6px;
+    border-radius: 8px 0 0 8px;
     outline: none;
 }
 
 .buscador input:focus {
-    border-color: var(--color-principal);
+    border-color: var(--color-primario);
 }
 
 .buscador button {
-    background: var(--color-principal);
+    background: var(--color-primario);
     border: none;
     color: #fff;
     padding: 0 0.9rem;
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 8px 8px 0;
     cursor: pointer;
 }
 
-.usuario a {
-    color: var(--color-texto);
+.usuario .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-primario);
+    color: #fff;
     text-decoration: none;
-    font-size: 1.1rem;
+    transition: opacity var(--transicion);
 }
 
-.usuario a:hover {
-    color: #fff;
+.usuario .dropdown-toggle::after {
+    display: none;
+}
+
+.usuario .dropdown-toggle:hover {
+    opacity: 0.85;
+}
+
+.usuario .dropdown-menu {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(30, 27, 58, 0.18);
+    padding: 8px;
+    margin-top: 10px;
+}
+
+.usuario .dropdown-item {
+    border-radius: 8px;
+    padding: 8px 14px;
+}
+
+.usuario .dropdown-item:hover {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
 }
 
 /* ---------- Barra lateral ---------- */
 .barra-lateral {
     position: fixed;
-    top: var(--alto-barra);
+    top: var(--alto-superior);
     left: 0;
     bottom: 0;
     width: var(--ancho-lateral);
@@ -101,41 +148,58 @@ body {
     flex-direction: column;
     justify-content: space-between;
     overflow-y: auto;
-    transition: transform 0.25s ease;
+    transition: transform var(--transicion);
     z-index: 1020;
 }
 
 .menu {
-    padding: 1rem 0.7rem;
+    padding: 20px 14px;
 }
 
 .menu-titulo {
-    color: #7f82a3;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 1rem 0.6rem 0.4rem;
+    letter-spacing: 1.5px;
+    color: var(--color-lateral-titulo);
+    padding: 0 12px;
+    margin: 14px 0 10px;
 }
 
+/* sirve para <a> y para <button> */
 .menu-link {
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    color: var(--color-texto);
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 4px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--color-lateral-texto);
+    text-align: left;
     text-decoration: none;
-    padding: 0.55rem 0.7rem;
-    border-radius: 6px;
-    font-size: 0.92rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background var(--transicion), color var(--transicion), padding-left var(--transicion);
 }
 
-.menu-link i:first-child {
-    width: 18px;
+.menu-link i:first-child,
+.menu-link svg:first-child {
+    width: 20px;
     text-align: center;
+    font-size: 1rem;
 }
 
-.menu-link:hover {
-    background: var(--color-hover);
+.menu-link:hover,
+.menu-link:focus-visible,
+.menu-link.activo {
+    background: var(--color-primario);
     color: #fff;
+    padding-left: 18px;
+    outline: none;
 }
 
 .menu-link .flecha {
@@ -150,25 +214,165 @@ body {
 .submenu {
     margin-left: 1rem;
     padding-left: 0.5rem;
-    border-left: 1px solid var(--color-hover);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pie-lateral {
-    background: var(--color-barra);
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--color-lateral-titulo);
+}
+
+.pie-lateral div {
     color: #fff;
-    padding: 0.8rem 1.2rem;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* ---------- Contenido principal ---------- */
+.contenido {
+    margin-left: var(--ancho-lateral);
+    padding: calc(var(--alto-superior) + 24px) 24px 24px;
+    transition: margin-left var(--transicion);
+}
+
+/* ---------- Tarjeta del formulario ---------- */
+.tarjeta-formulario {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 18px rgba(30, 27, 58, 0.08);
+    animation: aparecer 0.35s ease;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* cruz arriba a la derecha */
+.boton-cerrar {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #eceef5;
+    color: #7c7fa8;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background var(--transicion), color var(--transicion), transform var(--transicion);
+}
+
+.boton-cerrar:hover {
+    background: #e5484d;
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+.tarjeta-encabezado {
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    padding-right: 44px;
+    border-bottom: 1px solid #eceef5;
+}
+
+.tarjeta-encabezado h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-lateral);
+    margin: 0 0 4px;
+}
+
+.tarjeta-encabezado h2 i {
+    color: var(--color-primario);
+    margin-right: 8px;
+}
+
+.tarjeta-encabezado p {
+    margin: 0;
+    color: #7c7fa8;
     font-size: 0.9rem;
 }
 
-.pie-lateral small {
-    color: #7f82a3;
+.tarjeta-formulario .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2b2d42;
+    margin-bottom: 6px;
 }
 
-/* ---------- Contenido ---------- */
-.contenido {
-    margin-left: var(--ancho-lateral);
-    padding: calc(var(--alto-barra) + 1.5rem) 1.5rem 1.5rem;
-    transition: margin-left 0.25s ease;
+.tarjeta-formulario .input-group-text {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border: 1px solid #dfe1ee;
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    width: 42px;
+    justify-content: center;
+}
+
+.tarjeta-formulario .form-control {
+    border: 1px solid #dfe1ee;
+    border-radius: 0 10px 10px 0;
+    padding: 10px 14px;
+    transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.tarjeta-formulario .form-control:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px var(--color-primario-suave);
+}
+
+.acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.boton-principal,
+.boton-secundario {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transicion), opacity var(--transicion);
+}
+
+.boton-principal {
+    background: var(--color-primario);
+    color: #ffffff;
+}
+
+.boton-principal:hover {
+    background: #3730a3;
+}
+
+.boton-secundario {
+    background: #eceef5;
+    color: #2b2d42;
+}
+
+.boton-secundario:hover {
+    background: #dfe1ee;
 }
 
 /* ---------- Escritorio: el botón oculta la lateral ---------- */
@@ -188,13 +392,40 @@ body.menu-toggle .contenido {
 
     .contenido {
         margin-left: 0;
+        padding: calc(var(--alto-superior) + 16px) 16px 16px;
     }
 
     body.menu-toggle .barra-lateral {
         transform: translateX(0);
+        box-shadow: 8px 0 30px rgba(0, 0, 0, 0.3);
     }
 
     .marca {
         width: auto;
     }
+}
+
+@media (max-width: 575px) {
+    .barra-lateral {
+        width: 80%;
+    }
+
+    .marca {
+        font-size: 1rem;
+    }
+
+    .tarjeta-formulario {
+        padding: 20px;
+    }
+
+    .acciones-formulario {
+        flex-direction: column-reverse;
+    }
+
+    .acciones-formulario button {
+        width: 100%;
+    }
+}
+.tarjeta-login {
+    max-width: 420px;
 }
