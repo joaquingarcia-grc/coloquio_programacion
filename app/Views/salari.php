@@ -22,15 +22,18 @@
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><button class="dropdown-item" id='formuLogueo'>Loguearse</button></li>
                 <li><button class="dropdown-item"  id="btnRegistro">Registrarse</button></li>
-                <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+                <li><button class="dropdown-item" id='btnSalir'>Cerrar sesión</button></li>
             </ul>
         </div>
     </header>
-    <!-- un solo main, adentro van el formulario y la tabla -->
+    <!-- un solo main, adentro van los formularios y la tabla -->
     <main class="contenido">
-        <!-- aca aparecen los formularios (arriba), vacio no ocupa nada -->
-        <div id="ctnEmpleado"></div>
-        <!-- la tabla queda arriba y se corre para abajo cuando aparece un formulario -->
+        <!-- aca aparecen los formularios, uno al lado del otro (en pantalla chica se apilan) -->
+        <div class="row g-3">
+            <div class="col-lg-6" id="ctnEmpleado"></div>
+            <div class="col-lg-6" id="ctnLiquidacion"></div>
+        </div>
+        <!-- las tablas van abajo, a lo ancho -->
         <div id="ctnEmpleado2"></div>
     </main>
     <!-- Barra lateral -->

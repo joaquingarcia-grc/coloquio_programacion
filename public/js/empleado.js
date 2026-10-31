@@ -47,7 +47,7 @@ $(document).ready(function(){
     $('#crgLiquidacion').on('click', function () {
         var plantillaLiquidacion = `
             <section class="tarjeta-formulario">
-                <button type="button" class="boton-cerrar" id="botonCerrar">
+                <button type="button" class="boton-cerrar" id="botonCerrarLiq">
                     <i class="fas fa-xmark"></i>
                 </button>
                 <div class="tarjeta-encabezado">
@@ -79,7 +79,7 @@ $(document).ready(function(){
                         </div>
                     </div>
                     <div class="col-12 acciones-formulario">
-                        <button type="button" class="boton-secundario" id="botonCancelar">Cancelar</button>
+                        <button type="button" class="boton-secundario" id="botonCancelarLiq">Cancelar</button>
                         <button type="submit" class="boton-principal">
                             <i class="fas fa-save"></i> Guardar
                         </button>
@@ -87,7 +87,7 @@ $(document).ready(function(){
                 </form>
             </section>
         `;
-        $('#ctnEmpleado').html(plantillaLiquidacion);
+        $('#ctnLiquidacion').html(plantillaLiquidacion);
 
         // aca cargas los empleados en el select #id_empleado
     });
@@ -177,6 +177,48 @@ $(document).ready(function(){
     $('#ctnEmpleado').on('click', '#botonCerrar, #botonCancelar', function () {
         $('#ctnEmpleado').empty();
     });
+    // la cruz y el cancelar cierran el form de liquidacion
+    $('#ctnLiquidacion').on('click', '#botonCerrarLiq, #botonCancelarLiq', function () {
+        $('#ctnLiquidacion').empty();
+    });
+    // la cruz cierra la tabla (delegado porque se crea con js)
+    $('#ctnEmpleado2').on('click', '#botonCerrarTabla', function () {
+        $('#ctnEmpleado2').empty();
+    });
+    // filtra las filas a medida que se va tipeando
+    $('#ctnEmpleado2').on('input', '#buscadorTabla', function () {
+        var texto = $(this).val().toLowerCase();
+        $('#cuerpoTabla tr').each(function () {
+            var fila = $(this).text().toLowerCase();
+            if (fila.indexOf(texto) > -1) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+    // imprime la tabla (solo las filas que se ven, sin la columna Ver)
+    $('#ctnEmpleado2').on('click', '#botonImprimir', function () {
+        var titulo = $('#tituloTabla').text().trim();
+        var tabla = $('#tablaDatos').clone();
+        // saco las filas que oculto el buscador
+        tabla.find('tbody tr').each(function () {
+            if (this.style.display === 'none') {
+                $(this).remove();
+            }
+        });
+        // saco la columna Ver (ultima)
+        tabla.find('tr').each(function () {
+            $(this).children().last().remove();
+        });
+        var ventana = window.open('', '_blank');
+        ventana.document.write('<html><head><title>' + titulo + '</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"></head><body class="p-4"><h4 class="mb-3">' + titulo + '</h4>' + tabla[0].outerHTML + '</body></html>');
+        ventana.document.close();
+        ventana.addEventListener('load', function () {
+            ventana.focus();
+            ventana.print();
+        });
+    });
     // guarda el usuario nuevo (delegado porque el form se crea con js)
     $('#ctnEmpleado').on('submit', '#formRegistro', function (e) {
         e.preventDefault(); // frena el envio normal del form
@@ -219,11 +261,27 @@ $(document).ready(function(){
                 if (response.exito) {
                     mensajes(response.mensaje);
                     $('#formLogin')[0].reset();
-                    // aca es el evento: login ok, muestro todo
-                    mostrarSesion(response.denominacion);
+                    // aca es el evento: login ok, le pregunto a la sesion y muestro todo
+                    consultarSesion();
                 } else {
                     mensajes('Error: ' + response.mensaje, 'error');
                 }
+            },
+            error: function () {
+                mensajes('Error en el servidor', 'error');
+            }
+        });
+    });
+
+    // login (para salir)
+    $('#ctnEmpleado').on('click', '#btnSalir', function () {
+        $.ajax({
+            url: BASE + 'usuarios/salir',
+            method: 'POST',
+            data: dato,
+            dataType: 'json',
+            success: function (response) {
+                response.consultarSesion(exito);
             },
             error: function () {
                 mensajes('Error en el servidor', 'error');
@@ -275,39 +333,60 @@ $(document).ready(function(){
             dataType: 'json',
             success: function (response) {
                 let contLiquidaciones = `
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Cargado por</th>
-                                    <th>Empleado</th>
-                                    <th>Fecha de liquidación</th>
-                                    <th>Monto</th>
-                                    <th>Fecha emitido</th>
-                                    <th class="text-end">Ver</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                    <section class="tarjeta-formulario">
+                        <button type="button" class="boton-cerrar" id="botonCerrarTabla">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                        <div class="tarjeta-encabezado">
+                            <h2 id="tituloTabla">Lista de liquidaciones</h2>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fas fa-magnifying-glass"></i></span>
+                            <input type="text" class="form-control" id="buscadorTabla" placeholder="Buscar...">
+                        </div>
+                        <!-- alto fijo, cuando se llena aparece la barra de scroll -->
+                        <div class="table-responsive" style="height: 320px; overflow-y: auto;">
+                            <table class="table table-hover align-middle" id="tablaDatos">
+                                <thead class="sticky-top" style="background-color: var(--bs-body-bg);">
+                                    <tr>
+                                        <th>Cargado por</th>
+                                        <th>Empleado</th>
+                                        <th>Fecha de liquidación</th>
+                                        <th>Monto</th>
+                                        <th>Fecha emitido</th>
+                                        <th class="text-end">Ver</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpoTabla">`;
                 response.liquidaciones.forEach(liquidacion => {
                     // una fila por cada liquidacion
                     contLiquidaciones += `
-                                <tr>
-                                    <td>${liquidacion.cargado_por}</td>
-                                    <td><i class="fas fa-user"></i> ${liquidacion.empleado}</td>
-                                    <td>${liquidacion.fecha_liquidacion}</td>
-                                    <td>$ ${liquidacion.monto}</td>
-                                    <td>${liquidacion.fecha_alta}</td>
-                                    <td class="text-end">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" id="verLiquidacion_${liquidacion.id}" data-empleado="${liquidacion.empleado}" data-cargado="${liquidacion.cargado_por}" data-fecha="${liquidacion.fecha_liquidacion}" data-monto="${liquidacion.monto}" data-emitido="${liquidacion.fecha_alta}">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>`;
+                                    <tr>
+                                        <td>${liquidacion.cargado_por}</td>
+                                        <td>${liquidacion.empleado}</td>
+                                        <td>${liquidacion.fecha_liquidacion}</td>
+                                        <td>$ ${liquidacion.monto}</td>
+                                        <td>${liquidacion.fecha_alta}</td>
+                                        <td class="text-end">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="verLiquidacion_${liquidacion.id}" data-empleado="${liquidacion.empleado}" data-cargado="${liquidacion.cargado_por}" data-fecha="${liquidacion.fecha_liquidacion}" data-monto="${liquidacion.monto}" data-emitido="${liquidacion.fecha_alta}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>`;
                 });
                 contLiquidaciones += `
-                            </tbody>
-                        </table>
-                    </div>`;
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-end gap-1 mt-3">
+                            <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="botonImprimir" title="Imprimir">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="botonPapelera" title="Papelera">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </section>`;
                 $('#ctnEmpleado2').html(contLiquidaciones);
             },
             error: function () {
@@ -324,37 +403,58 @@ $(document).ready(function(){
             dataType: 'json',
             success: function (response) {
                 let contEmpleados = `
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Denominación</th>
-                                    <th>Correo</th>
-                                    <th>Área</th>
-                                    <th>Cargado por</th>
-                                    <th class="text-end">Ver</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                    <section class="tarjeta-formulario">
+                        <button type="button" class="boton-cerrar" id="botonCerrarTabla">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                        <div class="tarjeta-encabezado">
+                            <h2 id="tituloTabla">Lista de empleados</h2>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fas fa-magnifying-glass"></i></span>
+                            <input type="text" class="form-control" id="buscadorTabla" placeholder="Buscar...">
+                        </div>
+                        <!-- alto fijo, cuando se llena aparece la barra de scroll -->
+                        <div class="table-responsive" style="height: 320px; overflow-y: auto;">
+                            <table class="table table-hover align-middle" id="tablaDatos">
+                                <thead class="sticky-top" style="background-color: var(--bs-body-bg);">
+                                    <tr>
+                                        <th>Denominación</th>
+                                        <th>Correo</th>
+                                        <th>Área</th>
+                                        <th>Cargado por</th>
+                                        <th class="text-end">Ver</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpoTabla">`;
                 response.empleados.forEach(empleado => {
                     // una fila por cada empleado
                     contEmpleados += `
-                                <tr>
-                                    <td><i class="fas fa-user"></i> ${empleado.denominacion}</td>
-                                    <td>${empleado.correo}</td>
-                                    <td>${empleado.area}</td>
-                                    <td>${empleado.cargado_por}</td>
-                                    <td class="text-end">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" id="verEmpleado_${empleado.id}" data-denominacion="${empleado.denominacion}" data-correo="${empleado.correo}" data-area="${empleado.area}" data-cargado="${empleado.cargado_por}">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>`;
+                                    <tr>
+                                        <td>${empleado.denominacion}</td>
+                                        <td>${empleado.correo}</td>
+                                        <td>${empleado.area}</td>
+                                        <td>${empleado.cargado_por}</td>
+                                        <td class="text-end">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="verEmpleado_${empleado.id}" data-denominacion="${empleado.denominacion}" data-correo="${empleado.correo}" data-area="${empleado.area}" data-cargado="${empleado.cargado_por}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>`;
                 });
                 contEmpleados += `
-                            </tbody>
-                        </table>
-                    </div>`;
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-end gap-1 mt-3">
+                            <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="botonImprimir" title="Imprimir">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="botonPapelera" title="Papelera">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </section>`;
                 $('#ctnEmpleado2').html(contEmpleados);
             },
             error: function () {
@@ -419,16 +519,22 @@ $(document).ready(function(){
         $('#nombreUsuario').text(usuario);
     }
 
-    // al cargar la pagina pregunto si ya hay sesion (por si recargó)
-    $.ajax({
-        url: BASE + 'usuarios/sesion',
-        method: 'GET',
-        dataType: 'json',
-        success: function (response) {
-            if (response.logueado) {
-                mostrarSesion(response.denominacion);
+    // le pregunta al servidor si hay sesion y si hay, muestra todo (sirve para el login y para cuando recarga)
+    function consultarSesion() {
+        $.ajax({
+            url: BASE + 'usuarios/sesion',
+            method: 'GET',
+            dataType: 'json',
+            cache: false, // para que el navegador no me devuelva la respuesta vieja
+            success: function (response) {
+                if (response.logueado) {
+                    mostrarSesion(response.denominacion);
+                }
             }
-        }
-    });
+        });
+    }
+
+    // al cargar la pagina pregunto si ya hay sesion (por si recargó)
+    consultarSesion();
 
 });

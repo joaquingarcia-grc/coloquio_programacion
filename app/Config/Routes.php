@@ -9,4 +9,6 @@ $routes->post('usuarios/validacion', 'Salari::validacion');
 $routes->get('usuarios/sesion', 'Salari::sesion');
 $routes->get('empleados/api','Salari::api_empleados');
 $routes->get('liquidaciones/api','Salari::api_liquidaciones');
+$routes->post('/usaurios/salir', 'Salari::salir');
+
 

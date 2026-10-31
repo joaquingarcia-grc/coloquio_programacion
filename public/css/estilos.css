@@ -236,16 +236,19 @@ body {
     transition: margin-left var(--transicion);
 }
 
-/* separa el formulario de la tabla solo cuando hay un formulario cargado */
-#ctnEmpleado:not(:empty) {
+/* separa los formularios de la tabla solo cuando hay algun formulario cargado */
+.contenido .row:has(#ctnEmpleado:not(:empty), #ctnLiquidacion:not(:empty)) {
     margin-bottom: 2rem;
 }
 
 /* ---------- Tarjeta del formulario ---------- */
+/* ocupa todo el ancho de su columna y el mismo alto que el de al lado, igual que las tablas */
 .tarjeta-formulario {
     position: relative;
-    max-width: 760px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    margin: 0;
     background: #ffffff;
     border-radius: 16px;
     padding: 28px;
@@ -432,6 +435,9 @@ body.menu-toggle .contenido {
     }
 }
 
+/* login y registro quedan angostos y centrados en su columna */
 .tarjeta-login {
     max-width: 420px;
+    height: auto;
+    margin: 0 auto;
 }

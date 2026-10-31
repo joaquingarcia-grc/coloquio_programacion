@@ -21,6 +21,7 @@ class Salari extends BaseController{
     }
 
     public function index(){
+        
         $datos = [  'titulo' => 'Liquidacion de sueldos'];
 
         echo view('salari',$datos);
@@ -120,7 +121,17 @@ class Salari extends BaseController{
                 'logueado' => false
             ]);
         }
-    }   
+    } 
+    
+    public function salir(){
+        
+        $sesion = session();
+        $sesion->destroy();
+
+        return $this->response->setJSON([
+            'logueado' => false
+        ]);
+    }
 
     public function api_empleados(){
         //Esta funcion devuelve el listado de usuarios en formato json
