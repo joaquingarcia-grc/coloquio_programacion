@@ -21,8 +21,11 @@ class Salari extends BaseController{
     }
 
     public function index(){
+
+        $empleados = $this->empleados->findAll();
         
-        $datos = [  'titulo' => 'Liquidacion de sueldos'];
+        $datos = [  'titulo' => 'Liquidacion de sueldos',
+                    'empleados' => $empleados];
 
         echo view('salari',$datos);
     }

@@ -28,11 +28,10 @@
     </header>
     <!-- un solo main, adentro van los formularios y la tabla -->
     <main class="contenido">
-        <!-- aca aparecen los formularios, uno al lado del otro (en pantalla chica se apilan) -->
-        <div class="row g-3">
-            <div class="col-lg-6" id="ctnEmpleado"></div>
-            <div class="col-lg-6" id="ctnLiquidacion"></div>
-        </div>
+        <!-- login y registro van solos en el medio -->
+        <div class="mx-auto mb-3" id="ctnLogin" style="max-width: 540px;"></div>
+        <!-- aca van los formularios, se acomodan en el orden en que se abren (en pantalla chica se apilan) -->
+        <div class="row g-3" id="ctnFormularios"></div>
         <!-- las tablas van abajo, a lo ancho -->
         <div id="ctnEmpleado2"></div>
     </main>
@@ -78,9 +77,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
-        const BASE = "<?php echo base_url();?>"
-    </script> 
-    <script src='<?php echo base_url();?>js/empleado.js'></script>
+        const BASE = "<?php echo base_url();?>";
+        const VEMP = <?php echo json_encode($empleados, JSON_HEX_TAG); ?>;
+    </script>
+    <script src='<?php echo base_url();?>js/liquidaciones.js'></script> 
+    <script src='<?php echo base_url();?>js/empleados.js'></script>
     <script src='<?php echo base_url();?>js/script.js'></script>
 </body>
 </html>
