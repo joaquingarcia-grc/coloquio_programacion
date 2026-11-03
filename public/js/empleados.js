@@ -1,52 +1,12 @@
 $(document).ready(function(){
+
+    // guarda cuantas liquidaciones se dieron de baja para mostrarlo en el reporte (si no, se perderia el aviso en el login)
+    var bajasAvisadas = 0;
     
     $('#crgEmpleado').on('click', function () {
-        // si ya esta abierto no lo duplico
-        if ($('#colEmpleado').length === 0) {
-            var plantillaFormulario = `
-                <div class="col-lg-6" id="colEmpleado">
-                    <section class="tarjeta-formulario">
-                        <button type="button" class="boton-cerrar" id="botonCerrar">
-                            <i class="fas fa-xmark"></i>
-                        </button>
-                        <div class="tarjeta-encabezado">
-                            <h2><i class="fas fa-user-plus"></i> Cargar empleado</h2>
-                            <p>Completá los datos del nuevo empleado</p>
-                        </div>
-                        <form id="formEmpleado" class="row g-3" method="post" action="">
-                            <div class="col-12">
-                                <label for="denominacion" class="form-label">Nombre y apellido</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="denominacion" name="denominacion" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="correo" class="form-label">Correo</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="correo" name="correo" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="area" class="form-label">Área</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                                    <input type="text" class="form-control" id="area" name="area" required>
-                                </div>
-                            </div>
-                            <div class="col-12 acciones-formulario">
-                                <button type="button" class="boton-secundario" id="botonCancelar">Cancelar</button>
-                                <button type="submit" class="boton-principal">
-                                    <i class="fas fa-save"></i> Guardar
-                                </button>
-                            </div>
-                        </form>
-                    </section>
-                </div>
-            `;
-            // append: se acomoda segun el orden en que se abre
-            $('#ctnFormularios').append(plantillaFormulario);
+        // si ya esta abierto no hago nada (el form ya esta en su columna, solo lo muestro)
+        if ($('#colEmpleado').hasClass('d-none')) {
+            $('#colEmpleado').removeClass('d-none');
         }
     });
 
@@ -132,23 +92,31 @@ $(document).ready(function(){
     
     });
 
-    // la cruz y el cancelar cierran el formulario de empleado (lo saco del contenedor y el otro se corre)
-    $('#ctnFormularios').on('click', '#botonCerrar, #botonCancelar', function () {
-        $('#colEmpleado').remove();
+    // la cruz cierra el formulario de empleado (lo oculto y lo dejo limpio)
+    $('#ctnFormularios').on('click', '#botonCerrarEmp', function () {
+        $('#formEmpleado')[0].reset();
+        $('#colEmpleado').addClass('d-none');
+    });
+    // el cancelar solo limpia el formulario de empleado, no lo cierra
+    $('#ctnFormularios').on('click', '#botonCancelarEmp', function () {
+        $('#formEmpleado')[0].reset();
     });
     // la cruz y el cancelar cierran el login o el registro
     $('#ctnLogin').on('click', '#botonCerrar, #botonCancelar', function () {
         $('#ctnLogin').empty();
     });
 
-    // la cruz cierra la tabla (delegado porque se crea con js)
-    $('#ctnEmpleado2').on('click', '#botonCerrarTabla', function () {
-        $('#ctnEmpleado2').empty();
+    // la cruz cierra la tabla que corresponda (el sufijo Emp o Liq sale del id del boton)
+    $('#ctnFormularios').on('click', '#botonCerrarTablaEmp, #botonCerrarTablaLiq', function () {
+        var sufijo = this.id.replace('botonCerrarTabla', '');
+        $('#buscadorTabla' + sufijo).val('');
+        $('#seccionTabla' + sufijo).addClass('d-none');
     });
-    // filtra las filas a medida que se va tipeando
-    $('#ctnEmpleado2').on('input', '#buscadorTabla', function () {
+    // filtra las filas a medida que se va tipeando (solo las de su propia tabla)
+    $('#ctnFormularios').on('input', '#buscadorTablaEmp, #buscadorTablaLiq', function () {
+        var sufijo = this.id.replace('buscadorTabla', '');
         var texto = $(this).val().toLowerCase();
-        $('#cuerpoTabla tr').each(function () {
+        $('#cuerpoTabla' + sufijo + ' tr').each(function () {
             var fila = $(this).text().toLowerCase();
             if (fila.indexOf(texto) > -1) {
                 $(this).show();
@@ -157,10 +125,11 @@ $(document).ready(function(){
             }
         });
     });
-    // imprime la tabla (solo las filas que se ven, sin la columna Ver)
-    $('#ctnEmpleado2').on('click', '#botonImprimir', function () {
-        var titulo = $('#tituloTabla').text().trim();
-        var tabla = $('#tablaDatos').clone();
+    // imprime la tabla que corresponda (solo las filas que se ven, sin la columna Ver)
+    $('#ctnFormularios').on('click', '#botonImprimirEmp, #botonImprimirLiq', function () {
+        var sufijo = this.id.replace('botonImprimir', '');
+        var titulo = $('#tituloTabla' + sufijo).text().trim();
+        var tabla = $('#tablaDatos' + sufijo).clone();
         // saco las filas que oculto el buscador
         tabla.find('tbody tr').each(function () {
             if (this.style.display === 'none') {
@@ -286,42 +255,20 @@ $(document).ready(function(){
         var instancia = new bootstrap.Toast(toast[0], { delay: 4000 });
         instancia.show();
     }
+    // la dejo global para que liquidaciones.js tambien pueda usar mensajes()
+    window.mensajes = mensajes;
 
-    // cuando aprieto el boton de lista de empleados, pide los empleados a la api y los dibuja en una tabla
-    $('#verListaEmpleados').on('click', function () {
+    // pide los empleados a la api, llena el tbody de la tabla (que ya esta en el index) y la muestra
+    function cargarTablaEmpleados() {
         $.ajax({
             url: BASE + 'empleados/api',
             method: 'GET',
             dataType: 'json',
             success: function (response) {
-                let contEmpleados = `
-                    <section class="tarjeta-formulario">
-                        <button type="button" class="boton-cerrar" id="botonCerrarTabla">
-                            <i class="fas fa-xmark"></i>
-                        </button>
-                        <div class="tarjeta-encabezado">
-                            <h2 id="tituloTabla">Lista de empleados</h2>
-                        </div>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text"><i class="fas fa-magnifying-glass"></i></span>
-                            <input type="text" class="form-control" id="buscadorTabla" placeholder="Buscar...">
-                        </div>
-                        <!-- alto fijo, cuando se llena aparece la barra de scroll -->
-                        <div class="table-responsive" style="height: 320px; overflow-y: auto;">
-                            <table class="table table-hover align-middle" id="tablaDatos">
-                                <thead class="sticky-top" style="background-color: var(--bs-body-bg);">
-                                    <tr>
-                                        <th>Denominación</th>
-                                        <th>Correo</th>
-                                        <th>Área</th>
-                                        <th>Cargado por</th>
-                                        <th class="text-end">Ver</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cuerpoTabla">`;
+                let filasEmpleados = '';
                 response.empleados.forEach(empleado => {
                     // una fila por cada empleado
-                    contEmpleados += `
+                    filasEmpleados += `
                                     <tr>
                                         <td>${empleado.denominacion}</td>
                                         <td>${empleado.correo}</td>
@@ -334,28 +281,23 @@ $(document).ready(function(){
                                         </td>
                                     </tr>`;
                 });
-                contEmpleados += `
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="d-flex justify-content-end gap-1 mt-3">
-                            <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="botonImprimir" title="Imprimir">
-                                <i class="fas fa-print"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="botonPapelera" title="Papelera">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </section>`;
-                $('#ctnEmpleado2').html(contEmpleados);
+                $('#cuerpoTablaEmp').html(filasEmpleados);
+                // limpio el buscador asi no queda un texto viejo con las filas nuevas sin filtrar
+                $('#buscadorTablaEmp').val('');
+                $('#seccionTablaEmp').removeClass('d-none');
             },
             error: function () {
                 mensajes('Error en el servidor', 'error');
             }
         });
+    }
+
+    // cuando aprieto el boton de lista de empleados, la actualiza y la muestra
+    $('#verListaEmpleados').on('click', function () {
+        cargarTablaEmpleados();
     });
     // ojito de empleado: abre el modal con los datos del empleado
-    $('#ctnEmpleado2').on('click', '[id^="verEmpleado_"]', function () {
+    $('#ctnFormularios').on('click', '[id^="verEmpleado_"]', function () {
         var id = this.id.replace('verEmpleado_', '');
         $('#modalDetalleTitulo').html('<i class="fas fa-user"></i> Datos del empleado');
         $('#modalDetalleCuerpo').html(`
@@ -379,10 +321,76 @@ $(document).ready(function(){
         bootstrap.Modal.getOrCreateInstance($('#modalDetalle')[0]).show();
     });
 
+    // pide los avisos al servidor y llena la barra del reporte
+    // si abrir es true ademas abre la barra, si es false solo actualiza el numerito del boton
+    function cargarAvisos(abrir) {
+        $.ajax({
+            url: BASE + 'liquidaciones/avisos',
+            method: 'GET',
+            dataType: 'json',
+            cache: false,
+            success: function (response) {
+                var cantidad = response.por_vencer.length;
+                bajasAvisadas = bajasAvisadas + response.dadas_de_baja;
+                $('#ctnAvisos').empty();
+                if (cantidad > 0) {
+                    var lista = $('<div class="list-group mb-3"></div>');
+                    response.por_vencer.forEach(function (liq) {
+                        var cuando = '';
+                        if (liq.dias_restantes == 0) {
+                            cuando = 'vence hoy';
+                        } else {
+                            cuando = 'vence mañana';
+                        }
+                        var item = $('<div class="list-group-item"></div>');
+                        // .text() para que no se cuele html
+                        item.append($('<div class="fw-semibold"></div>').text(liq.empleado));
+                        item.append($('<small class="text-secondary"></small>').text('$ ' + liq.monto + ' - ' + cuando));
+                        lista.append(item);
+                    });
+                    $('#ctnAvisos').append(lista);
+                    $('#cantAvisos').text(cantidad).removeClass('d-none');
+                } else {
+                    $('#ctnAvisos').append('<p class="text-secondary">No hay liquidaciones por vencer</p>');
+                    $('#cantAvisos').addClass('d-none');
+                }
+
+                if (bajasAvisadas > 0) {
+                    var info = $('<div class="alert alert-secondary mb-0"></div>');
+                    info.text('Se dieron de baja ' + bajasAvisadas + ' liquidacion(es) vencida(s)');
+                    $('#ctnAvisos').append(info);
+                }
+
+                if (abrir) {
+                    bootstrap.Offcanvas.getOrCreateInstance($('#panelReporte')[0]).show();
+                }
+            },
+            error: function () {
+                mensajes('Error en el servidor', 'error');
+            }
+        });
+    }
+
+    // boton ver reporte: actualiza los avisos y abre la barra de la derecha
+    $('#btnReporte').on('click', function () {
+        cargarAvisos(true);
+    });
+
     function mostrarSesion(usuario) {
         $('#opcionesSesion').removeClass('d-none');
+        $('#btnReporte').removeClass('d-none');
         $('#nombreUsuario').text(usuario);
+        // aviso a todos los js que hay sesion, cada uno abre lo suyo (liquidaciones.js escucha este mismo evento)
+        $(document).trigger('sesionIniciada');
     }
+
+    // evento de login: abro el form y la tabla de empleados
+    $(document).on('sesionIniciada', function () {
+        $('#colEmpleado').removeClass('d-none');
+        cargarTablaEmpleados();
+        // trae los avisos para el numerito del boton, sin abrir la barra
+        cargarAvisos(false);
+    });
 
     // le pregunta al servidor si hay sesion y si hay, muestra todo (sirve para el login y para cuando recarga)
     function consultarSesion() {

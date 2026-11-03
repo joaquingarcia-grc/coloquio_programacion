@@ -1,12 +1,17 @@
 :root {
-    --color-primario: #4f46e5;
-    --color-primario-suave: rgba(79, 70, 229, 0.15);
-    --color-fondo: #f3f4f8;
-    --color-superior: #2a2750;
-    --color-lateral: #1e1b3a;
-    --color-lateral-texto: #c7c9e0;
-    --color-lateral-titulo: #7c7fa8;
-    --color-hover: rgba(255, 255, 255, 0.08);
+    --color-primario: #e8751a;
+    --color-primario-oscuro: #c45f0f;
+    --color-primario-suave: rgba(232, 117, 26, 0.14);
+    --color-fondo: #f6f3ef;
+    --color-superior: #d9631a;
+    --color-lateral: #2d2623;
+    --color-lateral-texto: #ddd2c8;
+    --color-lateral-titulo: #9b8b7e;
+    --color-hover: rgba(255, 255, 255, 0.18);
+    --color-texto: #2f2a26;
+    --color-texto-suave: #8a7d71;
+    --color-borde: #e3dbd2;
+    --color-borde-suave: #efe9e2;
     --alto-superior: 60px;
     --ancho-lateral: 260px;
     --transicion: 0.25s ease;
@@ -20,18 +25,19 @@ body {
     margin: 0;
     background: var(--color-fondo);
     font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-    color: #2b2d42;
+    color: var(--color-texto);
 }
 
 /* ---------- Barra superior ---------- */
+/* gradiente mandarina, de mas oscuro a la izquierda a mas claro a la derecha */
 .barra-superior {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: var(--alto-superior);
-    background: var(--color-superior);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(90deg, #c9561a 0%, #e8751a 55%, #f2a04a 100%);
+    box-shadow: 0 2px 10px rgba(60, 35, 15, 0.18);
     display: flex;
     align-items: center;
     gap: 14px;
@@ -49,7 +55,7 @@ body {
 }
 
 .marca:hover {
-    color: #c7c9e0;
+    color: #fff0e0;
 }
 
 .boton-menu {
@@ -68,7 +74,7 @@ body {
 }
 
 .boton-menu:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .buscador {
@@ -76,7 +82,7 @@ body {
 }
 
 .buscador input {
-    background: var(--color-lateral);
+    background: rgba(255, 255, 255, 0.2);
     border: 1px solid transparent;
     color: #fff;
     padding: 0.4rem 0.8rem;
@@ -85,11 +91,11 @@ body {
 }
 
 .buscador input:focus {
-    border-color: var(--color-primario);
+    border-color: #ffffff;
 }
 
 .buscador button {
-    background: var(--color-primario);
+    background: var(--color-primario-oscuro);
     border: none;
     color: #fff;
     padding: 0 0.9rem;
@@ -97,6 +103,7 @@ body {
     cursor: pointer;
 }
 
+/* el circulo del usuario va translucido para que se vea sobre el gradiente */
 .usuario .dropdown-toggle {
     display: flex;
     align-items: center;
@@ -104,10 +111,10 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--color-primario);
+    background: rgba(255, 255, 255, 0.22);
     color: #fff;
     text-decoration: none;
-    transition: opacity var(--transicion);
+    transition: background var(--transicion);
 }
 
 .usuario .dropdown-toggle::after {
@@ -115,13 +122,14 @@ body {
 }
 
 .usuario .dropdown-toggle:hover {
-    opacity: 0.85;
+    background: rgba(255, 255, 255, 0.35);
 }
 
 .usuario .dropdown-menu {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(30, 27, 58, 0.18);
+    --bs-dropdown-link-active-bg: var(--color-primario);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(60, 35, 15, 0.14);
     padding: 8px;
     margin-top: 10px;
 }
@@ -133,7 +141,7 @@ body {
 
 .usuario .dropdown-item:hover {
     background: var(--color-primario-suave);
-    color: var(--color-primario);
+    color: var(--color-primario-oscuro);
 }
 
 /* ---------- Barra lateral ---------- */
@@ -174,7 +182,7 @@ body {
     padding: 12px 14px;
     margin-bottom: 4px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     background: transparent;
     color: var(--color-lateral-texto);
     text-align: left;
@@ -250,9 +258,10 @@ body {
     height: 100%;
     margin: 0;
     background: #ffffff;
-    border-radius: 16px;
+    border: 1px solid var(--color-borde-suave);
+    border-radius: 12px;
     padding: 28px;
-    box-shadow: 0 4px 18px rgba(30, 27, 58, 0.08);
+    box-shadow: 0 2px 10px rgba(60, 35, 15, 0.06);
     animation: aparecer 0.35s ease;
 }
 
@@ -279,30 +288,31 @@ body {
     height: 36px;
     border: none;
     border-radius: 50%;
-    background: #eceef5;
-    color: #7c7fa8;
+    background: var(--color-borde-suave);
+    color: var(--color-texto-suave);
     font-size: 1rem;
     cursor: pointer;
     transition: background var(--transicion), color var(--transicion), transform var(--transicion);
 }
 
 .boton-cerrar:hover {
-    background: #e5484d;
+    background: #d64545;
     color: #ffffff;
     transform: rotate(90deg);
 }
 
+/* una rayita mandarina a la izquierda del titulo, bien de oficina */
 .tarjeta-encabezado {
     margin-bottom: 22px;
     padding-bottom: 16px;
     padding-right: 44px;
-    border-bottom: 1px solid #eceef5;
+    border-bottom: 1px solid var(--color-borde-suave);
 }
 
 .tarjeta-encabezado h2 {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--color-lateral);
+    color: var(--color-texto);
     margin: 0 0 4px;
 }
 
@@ -313,30 +323,30 @@ body {
 
 .tarjeta-encabezado p {
     margin: 0;
-    color: #7c7fa8;
+    color: var(--color-texto-suave);
     font-size: 0.9rem;
 }
 
 .tarjeta-formulario .form-label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #2b2d42;
+    color: var(--color-texto);
     margin-bottom: 6px;
 }
 
 .tarjeta-formulario .input-group-text {
     background: var(--color-primario-suave);
-    color: var(--color-primario);
-    border: 1px solid #dfe1ee;
+    color: var(--color-primario-oscuro);
+    border: 1px solid var(--color-borde);
     border-right: none;
-    border-radius: 10px 0 0 10px;
+    border-radius: 8px 0 0 8px;
     width: 42px;
     justify-content: center;
 }
 
 .tarjeta-formulario .form-control {
-    border: 1px solid #dfe1ee;
-    border-radius: 0 10px 10px 0;
+    border: 1px solid var(--color-borde);
+    border-radius: 0 8px 8px 0;
     padding: 10px 14px;
     transition: border-color var(--transicion), box-shadow var(--transicion);
 }
@@ -356,7 +366,7 @@ body {
 .boton-principal,
 .boton-secundario {
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 10px 22px;
     font-family: inherit;
     font-size: 0.95rem;
@@ -371,16 +381,43 @@ body {
 }
 
 .boton-principal:hover {
-    background: #3730a3;
+    background: var(--color-primario-oscuro);
 }
 
 .boton-secundario {
-    background: #eceef5;
-    color: #2b2d42;
+    background: var(--color-borde-suave);
+    color: var(--color-texto);
 }
 
 .boton-secundario:hover {
-    background: #dfe1ee;
+    background: var(--color-borde);
+}
+
+/* ---------- Tablas ---------- */
+/* encabezado chico en mayuscula y filas que se marcan en mandarina suave al pasar el mouse */
+.tarjeta-formulario .table {
+    --bs-table-hover-bg: rgba(232, 117, 26, 0.07);
+}
+
+.tarjeta-formulario .table thead th {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--color-texto-suave);
+    border-bottom: 2px solid var(--color-borde);
+}
+
+/* los botones de bootstrap "primary" (ojito, editar) pasan de azul a mandarina */
+.btn-outline-primary {
+    --bs-btn-color: var(--color-primario-oscuro);
+    --bs-btn-border-color: var(--color-primario);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: var(--color-primario);
+    --bs-btn-hover-border-color: var(--color-primario);
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: var(--color-primario-oscuro);
+    --bs-btn-active-border-color: var(--color-primario-oscuro);
 }
 
 /* ---------- Escritorio: el botón oculta la lateral ---------- */

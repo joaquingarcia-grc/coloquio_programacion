@@ -16,7 +16,7 @@
     //esto depende si queremos hacer un hard delet(false) o un soft delet(true)
     protected $useSoftDeletes = true;
     //aca defino las columnas que quiero que sean usables
-    protected $allowedFields = ['id_empleado', 'id_usuario','fecha_liquidacion','monto','fecha_alta'];
+    protected $allowedFields = ['id_empleado', 'id_usuario','fecha_liquidacion','monto','fecha_alta', 'fecha_vencimiento','fecha_baja'];
 
     protected $dateFormat = 'datetime';
 

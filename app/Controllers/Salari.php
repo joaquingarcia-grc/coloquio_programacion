@@ -159,6 +159,55 @@ class Salari extends BaseController{
         $datos = ['liquidaciones'=>$liquidaciones];
         return $this->response->setJSON($datos);
     }
-    
+
+
+    public function avisos(){
+
+        $id_usuario = session()->get('id');
+        $hoy = new \DateTime('today');
+        $manana = new \DateTime('tomorrow');
+        // por vencer: vencen hoy o mañana
+        $porVencer = $this->liquidaciones
+            ->where('id_usuario', $id_usuario)
+            ->where('fecha_baja', null)
+            ->where('fecha_vencimiento >=', $hoy->format('Y-m-d'))
+            ->where('fecha_vencimiento <=', $manana->format('Y-m-d'))
+            ->orderBy('fecha_vencimiento', 'asc')
+            ->findAll();
+        $lista = [];
+        foreach ($porVencer as $liq) {
+            $empleado = $this->empleados->find($liq['id_empleado']);
+            $nombre = '';
+            if ($empleado) {
+                $nombre = $empleado['denominacion'];
+            } else {
+                $nombre = 'Empleado ' . $liq['id_empleado'];
+            }
+            $vence = new \DateTime($liq['fecha_vencimiento']);
+            $diasRestantes = (int) $hoy->diff($vence)->format('%a');
+
+            $lista[] = [
+                'id'             => $liq['id'],
+                'empleado'       => $nombre,
+                'monto'          => $liq['monto'],
+                'dias_restantes' => $diasRestantes
+            ];
+        }
+        // vencidas: ya pasó el día de vencimiento, baja lógica
+        $vencidas = $this->liquidaciones
+            ->where('id_usuario', $id_usuario)
+            ->where('fecha_baja', null)
+            ->where('fecha_vencimiento <', $hoy->format('Y-m-d'))
+            ->findAll();
+        $cantBajas = 0;
+        foreach ($vencidas as $liq) {
+            $this->liquidaciones->update($liq['id'], ['fecha_baja' => date('Y-m-d H:i:s')]);
+            $cantBajas = $cantBajas + 1;
+        }
+        return $this->response->setJSON([
+            'por_vencer'    => $lista,
+            'dadas_de_baja' => $cantBajas
+        ]);
+    }
 
 }
