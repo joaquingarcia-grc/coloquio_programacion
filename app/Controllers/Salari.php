@@ -190,6 +190,7 @@ class Salari extends BaseController{
                 'id'             => $liq['id'],
                 'empleado'       => $nombre,
                 'monto'          => $liq['monto'],
+                'fecha_vencimiento' => $liq['fecha_vencimiento'],
                 'dias_restantes' => $diasRestantes
             ];
         }

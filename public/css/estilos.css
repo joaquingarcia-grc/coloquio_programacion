@@ -103,6 +103,11 @@ body {
     cursor: pointer;
 }
 
+/* antes de loguearse la campana esta oculta y no empuja, entonces el usuario se empuja solo a la derecha */
+.barra-superior:has(#btnReporte.d-none) .usuario {
+    margin-left: auto;
+}
+
 /* el circulo del usuario va translucido para que se vea sobre el gradiente */
 .usuario .dropdown-toggle {
     display: flex;

@@ -2,7 +2,7 @@ $(document).ready(function(){
 
     $('#crgLiquidacion').on('click', function () {
         // si ya esta abierto no hago nada (el form ya esta en su columna, solo lo muestro)
-        if ($('#colLiquidacion').hasClass('d-none')) {
+        if ($('#colLiquidacion').toggleClass('d-none')) {
             $('#colLiquidacion').removeClass('d-none');
         }
     });
@@ -14,11 +14,15 @@ $(document).ready(function(){
         $('#listaEmpleados').addClass('d-none').empty();
         $('#colLiquidacion').addClass('d-none');
     });
-
-    // el cancelar solo limpia el form de liquidacion, no lo cierra
+    
     $('#ctnFormularios').on('click', '#botonCancelarLiq', function () {
+        //limpia el formulario
         $('#formLiquidacion')[0].reset();
+        // el id del empleado va en un campo oculto, y el reset no lo borra, hay que vaciarlo a mano
+        // si no, quedaria guardado el empleado de antes con el buscador ya vacio
         $('#id_empleado').val('');
+        // la lista de sugerencias no es un campo del form, es un div que armo yo con js, asi que tampoco la limpia el reset
+        // la escondo y la vacio para que no quede una lista vieja flotando
         $('#listaEmpleados').addClass('d-none').empty();
     });
 
@@ -32,17 +36,18 @@ $(document).ready(function(){
             $('#listaEmpleados').addClass('d-none').empty();
             return;
         }
+        //se construye el boton con los datos del emplado para poder ser integrado en el formulario
         VEMP.forEach(function (empleado) {
             if (empleado.denominacion.toLowerCase().indexOf(texto) > -1) {
                 coincidencias += `<button type="button" class="list-group-item list-group-item-action" id="elegirEmpleado_${empleado.id}">${empleado.denominacion}</button>`;
             }
-        });
+        });//si no existen coicidencias muestra sin resultados
         if (coincidencias === '') {
             coincidencias = '<div class="list-group-item text-secondary">Sin resultados</div>';
         }
         $('#listaEmpleados').html(coincidencias).removeClass('d-none');
     });
-
+    
     // al tocar un empleado: el nombre va al buscador, el id al campo oculto y se esconde la lista
     $('#ctnFormularios').on('click', '[id^="elegirEmpleado_"]', function () {
         var id = this.id.replace('elegirEmpleado_', '');

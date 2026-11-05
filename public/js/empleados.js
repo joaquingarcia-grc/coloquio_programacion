@@ -205,14 +205,25 @@ $(document).ready(function(){
     });
 
     // login (para salir)
-    $('#ctnEmpleado').on('click', '#btnSalir', function () {
+    $('#btnSalir').on('click', function () {
         $.ajax({
             url: BASE + 'usuarios/salir',
             method: 'POST',
-            data: dato,
             dataType: 'json',
             success: function (response) {
-                response.consultarSesion(exito);
+                if (response.logueado === false) {
+                    // vuelve todo al estado de no logueado
+                    $('#opcionesSesion').addClass('d-none');
+                    $('#btnReporte').addClass('d-none');
+                    $('#cantAvisos').addClass('d-none').text('0');
+                    $('#colEmpleado').addClass('d-none');
+                    $('#seccionTablaEmp').addClass('d-none');
+                    $('#colLiquidacion').addClass('d-none');
+                    $('#seccionTablaLiq').addClass('d-none');
+                    $('#nombreUsuario').text('Usuario');
+                } else {
+                    mensajes('No se pudo cerrar la sesión', 'error');
+                }
             },
             error: function () {
                 mensajes('Error en el servidor', 'error');
@@ -334,37 +345,51 @@ $(document).ready(function(){
                 bajasAvisadas = bajasAvisadas + response.dadas_de_baja;
                 $('#ctnAvisos').empty();
                 if (cantidad > 0) {
-                    var lista = $('<div class="list-group mb-3"></div>');
+                    // la lista lleva id para poder imprimir solo ella (sin el cartel de bajas)
+                    var lista = $('<div class="list-group mb-3" id="listaAvisos"></div>');
                     response.por_vencer.forEach(function (liq) {
                         var cuando = '';
                         if (liq.dias_restantes == 0) {
-                            cuando = 'vence hoy';
+                            cuando = 'Vence hoy';
                         } else {
-                            cuando = 'vence mañana';
+                            cuando = 'Vence mañana';
                         }
                         var item = $('<div class="list-group-item"></div>');
-                        // .text() para que no se cuele html
-                        item.append($('<div class="fw-semibold"></div>').text(liq.empleado));
-                        item.append($('<small class="text-secondary"></small>').text('$ ' + liq.monto + ' - ' + cuando));
+                        // nombre del empleado
+                        item.append(
+                            $('<div class="fw-semibold"></div>').text(liq.empleado)
+                        );
+                        // monto y aviso de vencimiento
+                        item.append(
+                            $('<small class="text-secondary d-block"></small>')
+                                .text('$ ' + liq.monto + ' - ' + cuando)
+                        );
+                        // fecha exacta de vencimiento
+                        item.append(
+                            $('<small class="text-secondary d-block"></small>')
+                                .text('Fecha de vencimiento: ' + liq.fecha_vencimiento)
+                        );
                         lista.append(item);
                     });
                     $('#ctnAvisos').append(lista);
                     $('#cantAvisos').text(cantidad).removeClass('d-none');
+                    // hay avisos, muestro el pie con el boton de imprimir
+                    $('#pieAvisos').removeClass('d-none');
                 } else {
                     $('#ctnAvisos').append('<p class="text-secondary">No hay liquidaciones por vencer</p>');
                     $('#cantAvisos').addClass('d-none');
+                    // no hay nada para imprimir, escondo el pie
+                    $('#pieAvisos').addClass('d-none');
                 }
-
                 if (bajasAvisadas > 0) {
                     var info = $('<div class="alert alert-secondary mb-0"></div>');
                     info.text('Se dieron de baja ' + bajasAvisadas + ' liquidacion(es) vencida(s)');
                     $('#ctnAvisos').append(info);
                 }
-
                 if (abrir) {
                     bootstrap.Offcanvas.getOrCreateInstance($('#panelReporte')[0]).show();
                 }
-            },
+            },    
             error: function () {
                 mensajes('Error en el servidor', 'error');
             }
@@ -374,6 +399,21 @@ $(document).ready(function(){
     // boton ver reporte: actualiza los avisos y abre la barra de la derecha
     $('#btnReporte').on('click', function () {
         cargarAvisos(true);
+    });
+
+    // imprime las liquidaciones por vencer (solo la lista, sin el cartel de bajas)
+    $('#botonImprimirAvisos').on('click', function () {
+        var titulo = 'Liquidaciones por vencer';
+        var lista = $('#listaAvisos').clone();
+        var ventana = window.open('', '_blank');
+        // copio el head de la pagina asi usa los mismos css que ya estan cargados
+        ventana.document.write('<html><head>' + document.head.innerHTML + '</head><body class="p-4"><h4 class="mb-3">' + titulo + '</h4>' + lista[0].outerHTML + '</body></html>');
+        ventana.document.close();
+        ventana.document.title = titulo;
+        ventana.addEventListener('load', function () {
+            ventana.focus();
+            ventana.print();
+        });
     });
 
     function mostrarSesion(usuario) {

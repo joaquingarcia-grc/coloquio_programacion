@@ -251,6 +251,12 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body" id="ctnAvisos"></div>
+        <!-- pie con el boton de imprimir, aparece solo cuando hay avisos -->
+        <div class="d-none d-flex justify-content-end p-3 border-top" id="pieAvisos">
+            <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="botonImprimirAvisos" title="Imprimir">
+                <i class="fas fa-print"></i>
+            </button>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
