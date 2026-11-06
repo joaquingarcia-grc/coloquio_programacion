@@ -331,8 +331,7 @@ $(document).ready(function(){
             </button>`);
         bootstrap.Modal.getOrCreateInstance($('#modalDetalle')[0]).show();
     });
-
-    // pide los avisos al servidor y llena la barra del reporte
+     // pide los avisos al servidor y llena la barra del reporte
     // si abrir es true ademas abre la barra, si es false solo actualiza el numerito del boton
     function cargarAvisos(abrir) {
         $.ajax({
@@ -343,10 +342,24 @@ $(document).ready(function(){
             success: function (response) {
                 var cantidad = response.por_vencer.length;
                 bajasAvisadas = bajasAvisadas + response.dadas_de_baja;
+                // si el servidor dio de baja alguna vencida, la tabla de liquidaciones quedo desactualizada
+                // aviso con un evento y liquidaciones.js la vuelve a armar (misma idea que sesionIniciada)
+                if (response.dadas_de_baja > 0) {
+                    $(document).trigger('liquidacionesDadasDeBaja');
+                }
                 $('#ctnAvisos').empty();
                 if (cantidad > 0) {
                     // la lista lleva id para poder imprimir solo ella (sin el cartel de bajas)
                     var lista = $('<div class="list-group mb-3" id="listaAvisos"></div>');
+                    // el usuario logueado viene en cada item, con el primero alcanza
+                    var item0 = $('<div class="list-group-item bg-light"></div>');
+                    item0.append(
+                        $('<small class="text-secondary d-block"></small>').text('Responsable')
+                    );
+                    item0.append(
+                        $('<div class="fw-semibold"></div>').text(response.por_vencer[0].usuario)
+                    );
+                    lista.append(item0);
                     response.por_vencer.forEach(function (liq) {
                         var cuando = '';
                         if (liq.dias_restantes == 0) {
@@ -389,7 +402,7 @@ $(document).ready(function(){
                 if (abrir) {
                     bootstrap.Offcanvas.getOrCreateInstance($('#panelReporte')[0]).show();
                 }
-            },    
+            },
             error: function () {
                 mensajes('Error en el servidor', 'error');
             }

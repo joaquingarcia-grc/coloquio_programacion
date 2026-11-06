@@ -159,13 +159,14 @@ class Salari extends BaseController{
         $datos = ['liquidaciones'=>$liquidaciones];
         return $this->response->setJSON($datos);
     }
-
-
     public function avisos(){
-
         $id_usuario = session()->get('id');
-        $hoy = new \DateTime('today');
-        $manana = new \DateTime('tomorrow');
+        $usuario = session()->get('denominacion');
+        // zona horaria de argentina fija, asi "hoy" es siempre el dia real de acá
+        $zona = new \DateTimeZone('America/Argentina/Buenos_Aires');
+        $hoy = new \DateTime('today', $zona);
+        $manana = new \DateTime('tomorrow', $zona);
+        $ahora = new \DateTime('now', $zona);
         // por vencer: vencen hoy o mañana
         $porVencer = $this->liquidaciones
             ->where('id_usuario', $id_usuario)
@@ -183,7 +184,7 @@ class Salari extends BaseController{
             } else {
                 $nombre = 'Empleado ' . $liq['id_empleado'];
             }
-            $vence = new \DateTime($liq['fecha_vencimiento']);
+            $vence = new \DateTime($liq['fecha_vencimiento'], $zona);
             $diasRestantes = (int) $hoy->diff($vence)->format('%a');
 
             $lista[] = [
@@ -191,7 +192,8 @@ class Salari extends BaseController{
                 'empleado'       => $nombre,
                 'monto'          => $liq['monto'],
                 'fecha_vencimiento' => $liq['fecha_vencimiento'],
-                'dias_restantes' => $diasRestantes
+                'dias_restantes' => $diasRestantes,
+                'usuario' => $usuario
             ];
         }
         // vencidas: ya pasó el día de vencimiento, baja lógica
@@ -202,7 +204,7 @@ class Salari extends BaseController{
             ->findAll();
         $cantBajas = 0;
         foreach ($vencidas as $liq) {
-            $this->liquidaciones->update($liq['id'], ['fecha_baja' => date('Y-m-d H:i:s')]);
+            $this->liquidaciones->update($liq['id'], ['fecha_baja' => $ahora->format('Y-m-d H:i:s')]);
             $cantBajas = $cantBajas + 1;
         }
         return $this->response->setJSON([
