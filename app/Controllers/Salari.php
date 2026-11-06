@@ -29,6 +29,31 @@ class Salari extends BaseController{
 
         echo view('salari',$datos);
     }
+    
+    public function cargarEmpleado(){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        $id_usuario = session()->get('id');
+        // Datos que llegan por POST, la denominación siempre se guarda en minúscula
+        $denominacion = strtolower(trim($this->request->getPost('denominacion')));
+        $correo = trim($this->request->getPost('correo'));
+        $area = trim($this->request->getPost('area'));
+
+        if(empty($denominacion) || empty($correo) || empty($area)){
+            echo json_encode(['exito' => false, 'mensaje' => 'Faltan datos obligatorios']);
+            exit;
+        }
+        $this->empleados->insert([
+                'id_usuario'=>$id_usuario,
+                'denominacion'=>$denominacion,
+                'correo'=>$correo,
+                'area'=>$area
+        ]);
+        //damos una respuesta luego de insertar
+        echo json_encode(['exito' => true, 'mensaje' => 'Empleado cargado con exito']);
+        exit;
+    }
+
     public function insertar(){
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');

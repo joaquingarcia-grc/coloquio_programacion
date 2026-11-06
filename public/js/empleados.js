@@ -176,6 +176,34 @@ $(document).ready(function(){
             }
         });
     });
+    // guarda el empleado nuevo (delegado porque el form esta dentro de #ctnFormularios)
+    $('#ctnFormularios').on('submit', '#formEmpleado', function (e) {
+        e.preventDefault(); // frena el envio normal del form
+        var dato = {
+            denominacion: $('#denominacion').val(),
+            correo: $('#correo').val(),
+            area: $('#area').val()
+        };
+        $.ajax({
+            url: BASE + 'empleados/insertar',
+            method: 'POST',
+            data: dato,
+            dataType: 'json',
+            success: function (response) {
+                if (response.exito) {
+                    mensajes(response.mensaje); // mensaje que manda el servidor
+                    $('#formEmpleado')[0].reset(); // limpia solo si se guardo bien
+                    // vuelvo a armar la tabla para que aparezca el empleado nuevo
+                    cargarTablaEmpleados();
+                } else {
+                    mensajes('Error: ' + response.mensaje, 'error');
+                }
+            },
+            error: function () {
+                mensajes('Error en el servidor', 'error');
+            }
+        });
+    });
     // login (delegado porque el form se crea con js)
     $('#ctnLogin').on('submit', '#formLogin', function (e) {
         e.preventDefault();
@@ -331,7 +359,7 @@ $(document).ready(function(){
             </button>`);
         bootstrap.Modal.getOrCreateInstance($('#modalDetalle')[0]).show();
     });
-     // pide los avisos al servidor y llena la barra del reporte
+    // pide los avisos al servidor y llena la barra del reporte
     // si abrir es true ademas abre la barra, si es false solo actualiza el numerito del boton
     function cargarAvisos(abrir) {
         $.ajax({

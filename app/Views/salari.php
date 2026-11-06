@@ -49,24 +49,24 @@
                     </div>
                     <form id="formEmpleado" class="row g-3" method="post" action="">
                         <div class="col-md-4">
-                            <label for="denominacionEmp" class="form-label">Nombre y apellido</label>
+                            <label for="denominacion" class="form-label">Nombre y apellido</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="denominacionEmp" name="denominacion" required>
+                                <input type="text" class="form-control" id="denominacion" name="denominacion" required>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <label for="correoEmp" class="form-label">Correo</label>
+                            <label for="correo" class="form-label">Correo</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="correoEmp" name="correo" required>
+                                <input type="email" class="form-control" id="correo" name="correo" required>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <label for="areaEmp" class="form-label">Área</label>
+                            <label for="area" class="form-label">Área</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                                <input type="text" class="form-control" id="areaEmp" name="area" required>
+                                <input type="text" class="form-control" id="area" name="area" required>
                             </div>
                         </div>
                         <div class="col-12 acciones-formulario">
