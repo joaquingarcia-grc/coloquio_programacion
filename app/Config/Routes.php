@@ -3,7 +3,12 @@
 use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
-$routes->get('/', 'Salari::index');
+
+
+$routes->get('/registro', 'Login::index');
+$routes->post('/registro/validacion', 'Login::validacion');
+
+$routes->get('/salari', 'Salari::index');
 $routes->post('usuarios/insertar', 'Salari::insertar');
 $routes->post('usuarios/validacion', 'Salari::validacion');
 $routes->get('usuarios/sesion', 'Salari::sesion');
@@ -12,4 +17,5 @@ $routes->get('liquidaciones/api','Salari::api_liquidaciones');
 $routes->post('/usuarios/salir', 'Salari::salir');
 $routes->get('liquidaciones/avisos','Salari::avisos');
 $routes->post('/empleados/insertar', 'Salari::cargarEmpleado');
+$routes->get('liquidaciones/calendario', 'Salari::calendario');
 

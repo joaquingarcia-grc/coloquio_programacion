@@ -29,6 +29,54 @@ class Salari extends BaseController{
 
         echo view('salari',$datos);
     }
+
+    public function calendario(){
+        $id_usuario = session()->get('id');
+        // misma zona que en avisos, asi "hoy" es el dia real de aca
+        $zona = new \DateTimeZone('America/Argentina/Buenos_Aires');
+        $hoy = new \DateTime('today', $zona);
+        // withDeleted para que se vean tambien las vencidas que se dieron de baja solas
+        $liquidaciones = $this->liquidaciones
+            ->where('id_usuario', $id_usuario)
+            ->withDeleted()
+            ->orderBy('fecha_liquidacion', 'asc')
+            ->findAll();
+        $lista = [];
+        foreach ($liquidaciones as $liq) {
+            $vencida = false;
+            if ($liq['fecha_vencimiento'] < $hoy->format('Y-m-d')) {
+                $vencida = true;
+            }
+            // si tiene baja pero todavia no vencio, la borraron a mano, no va en el calendario
+            if ($liq['fecha_baja'] != null && $vencida == false) {
+                continue;
+            }
+            $empleado = $this->empleados->find($liq['id_empleado']);
+            $nombre = '';
+            if ($empleado) {
+                $nombre = $empleado['denominacion'];
+            } else {
+                $nombre = 'Empleado ' . $liq['id_empleado'];
+            }
+            $estado = '';
+            if ($vencida) {
+                $estado = 'vencida';
+            } else {
+                $estado = 'pendiente';
+            }
+            $lista[] = [
+                'id'                => $liq['id'],
+                'empleado'          => $nombre,
+                'monto'             => $liq['monto'],
+                'fecha_liquidacion' => $liq['fecha_liquidacion'],
+                'fecha_vencimiento' => $liq['fecha_vencimiento'],
+                'estado'            => $estado
+            ];
+        }
+        return $this->response->setJSON([
+            'liquidaciones' => $lista
+        ]);
+    }
     
     public function cargarEmpleado(){
         //Esto nos indica que esperamos peticiones json
@@ -100,42 +148,7 @@ class Salari extends BaseController{
         }
     }
 
-    public function validacion(){        
-        //Esto nos indica que esperamos peticiones json
-        header('Content-Type: application/json');
-        //Traemos las variables del formulario de logueo
-        $denominacion = strtolower(trim($this->request->getPost('denominacion')));
-        $pswd = $this->request->getPost('pswd');
-        //verificamos que esten completos los dos campos
-        if (empty($denominacion) || empty($pswd)){
-          echo json_encode(['exito' => false, 'mensaje' => 'Faltan datos']);
-          exit;  
-        }
-        //Buscamos al usuario por su denominacion
-        $datosUsuario = $this->usuarios->where('denominacion',$denominacion)->first();
-        //Si el usuario existe comparamos la contraseña
-        if(!empty($datosUsuario)){
-            if(password_verify($pswd, $datosUsuario['pswd'])){
-                //Si es correcta guardamos el id y la denominacion en la sesion
-                $data_sesion = [
-                    'id' => $datosUsuario['id'],
-                    'denominacion' => $datosUsuario['denominacion']
-                ];
-                $sesion = session();
-                $sesion->set($data_sesion);
-                
-                echo json_encode(['exito' => true, 'mensaje' => 'Bienvenido']);
-                exit;              
-            }else{
-                //La contraseña no coincide
-                echo json_encode(['exito' => false, 'mensaje' => 'Credecial incorrecta']);
-            }exit;
-        }else{
-            //El usuario no existe
-            echo json_encode(['exito' => false, 'mensaje' => 'Usted no se encuentra registrado']);
-            exit;
-        }
-    }
+
 
     public function sesion(){
         $sesion = session();
@@ -172,18 +185,7 @@ class Salari extends BaseController{
         $datos = ['empleados'=>$empleados];
         return $this->response->setJSON($datos);
     }
-    public function api_liquidaciones(){
-        //Esta funcion devuelve el listado de liquidaciones en formato json
-        //Traemos todas las liquidaciones activas, de la más nueva a la más vieja
-        $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, usuarios.denominacion AS cargado_por, empleados.denominacion AS empleado')
-                        ->join('usuarios', 'usuarios.id = liquidaciones.id_usuario')
-                        ->join('empleados', 'empleados.id = liquidaciones.id_empleado')
-                        ->orderBy('liquidaciones.id','DESC')
-                        ->findAll();
-        //Armamos los datos y los devolvemos como json
-        $datos = ['liquidaciones'=>$liquidaciones];
-        return $this->response->setJSON($datos);
-    }
+
     public function avisos(){
         $id_usuario = session()->get('id');
         $usuario = session()->get('denominacion');

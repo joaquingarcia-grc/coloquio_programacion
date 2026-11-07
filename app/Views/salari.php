@@ -224,6 +224,9 @@
                 <button type="button" class="menu-link" id="verListaLiquidaciones">
                     <i class="fas fa-list"></i> Lista de liquidaciones
                 </button>
+                <button type="button" class="menu-link" id="verCalendario">
+                    <i class="fas fa-calendar-days"></i> Calendario
+                </button>
             </div>
         </nav>
         <div class="pie-lateral">
@@ -244,6 +247,54 @@
             </div>
         </div>
     </div>
+    <!-- modal del calendario de liquidaciones (calendario.js lo llena) -->
+    <div class="modal fade" id="modalCalendario" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-days"></i> Calendario de liquidaciones</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- cambio de mes -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="mesAnterior" title="Mes anterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h6 class="mb-0" id="tituloMes"></h6>
+                        <button type="button" class="btn btn-sm btn-light border-0 text-secondary" id="mesSiguiente" title="Mes siguiente">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Lun</th>
+                                <th class="text-center">Mar</th>
+                                <th class="text-center">Mié</th>
+                                <th class="text-center">Jue</th>
+                                <th class="text-center">Vie</th>
+                                <th class="text-center">Sáb</th>
+                                <th class="text-center">Dom</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpoCalendario"></tbody>
+                    </table>
+                    <!-- referencia de colores -->
+                    <div class="d-flex flex-wrap gap-3 small text-secondary">
+                        <span><span class="d-inline-block rounded-circle bg-danger" style="width: 8px; height: 8px;"></span> Vencidas</span>
+                        <span><span class="d-inline-block rounded-circle bg-primary" style="width: 8px; height: 8px;"></span> Pendientes</span>
+                        <span><span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px;"></span> Se liquidan ese día</span>
+                    </div>
+                    <!-- lista del dia, aparece al apretar el ojito -->
+                    <div class="mt-3 d-none" id="detalleDia">
+                        <h6 id="tituloDia"></h6>
+                        <div class="list-group" id="listaDia"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- barra que se desliza desde la derecha con el reporte de avisos (el js llena #ctnAvisos) -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="panelReporte">
         <div class="offcanvas-header">
@@ -258,6 +309,7 @@
             </button>
         </div>
     </div>
+    <div id="mensaje" class="alert d-none"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
@@ -266,6 +318,8 @@
     </script>
     <script src='<?php echo base_url();?>js/liquidaciones.js'></script> 
     <script src='<?php echo base_url();?>js/empleados.js'></script>
+    <script src='<?php echo base_url();?>js/calendario.js'></script>
     <script src='<?php echo base_url();?>js/script.js'></script>
+    <script src="<?php echo base_url();?>js/login.js"></script>
 </body>
 </html>
