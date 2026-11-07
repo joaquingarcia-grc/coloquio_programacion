@@ -8,7 +8,13 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/registro', 'Login::index');
 $routes->post('/registro/validacion', 'Login::validacion');
 
-$routes->get('/salari', 'Salari::index');
+$routes->get('/usuarios', 'Usuarios::index');
+
+$routes->get('/empleados', 'Empleados::index');
+
+$routes->get('/liquidaciones', 'Liquidaciones::index');
+
+$routes->get('/sueldos', 'Sueldos::index');
 $routes->post('usuarios/insertar', 'Salari::insertar');
 $routes->post('usuarios/validacion', 'Salari::validacion');
 $routes->get('usuarios/sesion', 'Salari::sesion');

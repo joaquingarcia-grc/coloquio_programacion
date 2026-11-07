@@ -6,18 +6,32 @@ use App\Models\EmpleadosModel;
 use App\Models\LiquidacionesModel;
 
 class Sueldos extends BaseController{
-    
-    public function api_liquidaciones(){
-        //Esta funcion devuelve el listado de liquidaciones en formato json
-        //Traemos todas las liquidaciones activas, de la más nueva a la más vieja
-        $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, usuarios.denominacion AS cargado_por, empleados.denominacion AS empleado')
-                        ->join('usuarios', 'usuarios.id = liquidaciones.id_usuario')
-                        ->join('empleados', 'empleados.id = liquidaciones.id_empleado')
-                        ->orderBy('liquidaciones.id','DESC')
-                        ->findAll();
-        //Armamos los datos y los devolvemos como json
-        $datos = ['liquidaciones'=>$liquidaciones];
-        return $this->response->setJSON($datos);
+
+    protected $sesion;
+    protected $usuarios;
+    protected $empleados;
+    protected $liquidaciones;
+
+    public function __construct(){
+        //Se inicia la sesión y se instancian los modelos
+        $this->sesion = session();
+        $this->usuarios = new UsuariosModel();
+        $this->empleados = new EmpleadosModel();
+        $this->liquidaciones = new LiquidacionesModel();
     }
+
+    public function index(){
+
+        $usr_logueado = $this->sesion->get('denominacion');
+        
+        $datos = [  'titulo' => 'Liquidacion de sueldos',
+                    'usuario'=>$usr_logueado];
+
+        // Se arma la página: encabezado, formulario y pie
+        echo view('head',$datos);
+        echo view('body');
+        echo  view('footer');
+    }
+
 
 }
