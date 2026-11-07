@@ -8,6 +8,8 @@
     <link href='<?php echo base_url()?>css/estilos.css' rel="stylesheet">
     <link href='<?php echo base_url()?>css/login.css' rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.bootstrap5.min.css">
 </head>
 <body>
     <!-- Barra superior -->

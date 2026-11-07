@@ -32,6 +32,12 @@ class Usuarios extends BaseController{
         echo view('usuarios/usuarios');
         echo  view('footer');
     }
+    // API: devuelve en JSON los usuarios activos, del más nuevo al más viejo
+    public function api_usuarios(){
+        $usuarios = $this->usuarios->orderBy('id','DESC')->findAll();
+        $datos = ['usuarios'=>$usuarios];
+        return $this->response->setJSON($datos);
+    }
 
 
 }

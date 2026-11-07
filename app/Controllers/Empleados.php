@@ -33,5 +33,18 @@ class Empleados extends BaseController{
         echo  view('footer');
     }
 
+    public function api_empleados(){
+       //Esta funcion devuelve el listado de usuarios en formato json
+       //Traemos todos los usuarios activos, del más nuevo al más viejo
+       $empleados =    $this->empleados->select('empleados.*, usuarios.denominacion AS cargado_por')
+                       ->join('usuarios', 'usuarios.id = empleados.id_usuario')
+                       ->orderBy('empleados.id','DESC')
+                       ->findAll();
+       //Armamos los datos y los devolvemos como json
+       $datos = ['empleados'=>$empleados];
+       return $this->response->setJSON($datos);
+   }
+
+
 
 }
