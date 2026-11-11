@@ -29,6 +29,11 @@
     						<button type="submit" class="btn btn-iniciar">Iniciar</button>
     					</div>
     				</form>
+    				<hr>
+    				<div class="text-center">
+    					<p class="mb-2">¿No estás registrado? Regístrate aquí</p>
+    					<a href="<?php echo base_url();?>registro/nuevo"class=" btn-iniciar">Nuevo</a>
+    				</div>
     			</div>
     		</div>
     	</div>

@@ -6,7 +6,10 @@ use CodeIgniter\Router\RouteCollection;
 
 
 $routes->get('/registro', 'Login::index');
+$routes->get('/registro/nuevo', 'Login::nuevo');
 $routes->post('/registro/validacion', 'Login::validacion');
+$routes->post('registro/insertar', 'Login::insertar');
+
 
 $routes->get('/usuarios', 'Usuarios::index');
 $routes->get('usuarios/api','Usuarios::api_usuarios');

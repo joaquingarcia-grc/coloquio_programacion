@@ -38,9 +38,6 @@
         <nav class="menu" id="menuAcordeon">
             <div id="opcionesSesion">
                 <div class="menu-titulo">Empleado</div>
-                <a class="menu-link" id="crgUsuario" href="<?php echo base_url()?>usuarios">
-                    <i class="fas fa-users"></i> Usuarios
-                </a>
                 <a class="menu-link" id="crgEmpleado" href="<?php echo base_url()?>empleados">
                     <i class="fas fa-id-badge"></i> Empleados
                 </a>
