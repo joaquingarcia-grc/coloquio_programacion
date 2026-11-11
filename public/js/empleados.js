@@ -1,4 +1,21 @@
 $(document).ready(function(){
+    //------------------------------------------------------------------------------------------------//
+    //mensaje simple de aviso, tipo: 'success', 'warning' o 'error'
+    function mensajes(texto, tipo){
+        $('#mensaje').removeClass('d-none alert-success alert-warning alert-danger');//saca lo anterior
+        if (tipo === 'success'){
+            $('#mensaje').addClass('alert-success');
+        }else if (tipo === 'warning'){
+            $('#mensaje').addClass('alert-warning');
+        }else{
+            $('#mensaje').addClass('alert-danger');
+        }
+        $('#mensaje').text(texto);
+        setTimeout(function(){
+            $('#mensaje').addClass('d-none');//lo oculta a los 2 segundos
+        }, 2000);
+    }
+    //------------------------------------------------------------------------------------------------//
     cargarTablaEmpleados();
     //esta funcion rellena la tabla de atributos
     function cargarTablaEmpleados(){
@@ -19,9 +36,8 @@ $(document).ready(function(){
                                         <td>${empleado.denominacion}</td>
                                         <td>${empleado.correo}</td>
                                         <td>${empleado.area}</td>
-                                        <td>${empleado.cargado_por}</td>
                                         <td class="text-end">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" id="verEmpleado_${empleado.id}" data-denominacion="${empleado.denominacion}" data-correo="${empleado.correo}" data-area="${empleado.area}" data-cargado="${empleado.cargado_por}">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="verEmpleado_${empleado.id}" data-denominacion="${empleado.denominacion}" data-correo="${empleado.correo}" data-area="${empleado.area}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </td>
@@ -79,43 +95,67 @@ $(document).ready(function(){
     };
 
     //los datos seran enviado una ves obtengamos la accion desde el boton del modal
-    $('#GuardadoET').on('click', function(){
+    $('#formEmpleado').on('submit', function(e){
+        e.preventDefault();//detiene el envio normal del formulario
         const dato = {//creamos un objeto con todos nuestros datos
             denominacion: $('#denominacion').val(),
+            correo: $('#correo').val(),
+            area: $('#area').val()
         }   
         $.ajax({
-            url: BASE + 'etiquetas/insertar',
+            url: BASE + 'empleados/insertar',
             method: 'POST',
             data: dato,
             dataType: 'json',
             success: function(response){
                 if (response.exito){
-                    $('#modalGuardarET').modal('hide');//ocultamos el modal de guardar
-                    mensajes("Etiqueta guardada con ID: " + response.id + response.mensaje,'success');
-                    $('#formularioET')[0].reset();
-                    setTimeout(function(){
-                        window.location.href = BASE + 'etiquetas';
-                    },  3010);
+                    mensajes(response.mensaje,'success');
+                    $('#formEmpleado')[0].reset();
+                    $('#modalEmpleado').modal('hide');//ocultamos el modal de guardar
+                    $('#tablaDatosEmp').DataTable().destroy();
+                    cargarTablaEmpleados();
                 }else if (response.papelera){
-                    $('#modalGuardarET').modal('hide');//ocultamos el modal de guardar
                     mensajes('Aviso: ' + response.mensaje, 'warning');
-                    $('#formularioET')[0].reset();
-                    
                 }else{
-                    $('#modalGuardarET').modal('hide');//ocultamos el modal de guardar
                     mensajes('Error: ' + response.mensaje, 'error');
-                    $('#formularioET')[0].reset();
-                    
                 }
             },
             error: function() {
-                $('#modalGuardarET').modal('hide');//ocultamos el modal de guardar
-                mensajes('Error en el servidor');
-            },
-            complete: function(){
-                $('#modalGuardarET').modal('hide');//ocultamos el modal de guardar
-                $('#formularioET')[0].reset();
-            } 
+                mensajes('Error en el servidor','error');
+            }
         });
+    });
+    //------------------------------------------------------------------------------------------------//
+    //el ojito abre el modal con los datos del empleado (los toma del boton, que vienen de la base)
+    $('#cuerpoTablaEmp').on('click', 'button[id^="verEmpleado_"]', function(){
+        const boton = $(this);
+        $('#idEmpleadoVer').val(this.id.split('_')[1]);//id del empleado, queda guardado para cuando armemos editar y borrar
+        //vista de solo lectura
+        $('#verDenominacion').text(boton.attr('data-denominacion'));
+        $('#verCorreo').text(boton.attr('data-correo'));
+        $('#verArea').text(boton.attr('data-area'));
+        //formulario de edicion con los mismos datos
+        $('#editDenominacion').val(boton.attr('data-denominacion'));
+        $('#editCorreo').val(boton.attr('data-correo'));
+        $('#editArea').val(boton.attr('data-area'));
+        //siempre abre en la vista de solo lectura
+        $('#formEditarEmp').addClass('d-none');
+        $('#vistaDatosEmp').removeClass('d-none');
+        $('#modalVerEmpleado').modal('show');
+    });
+
+    //el lapiz convierte los datos en formulario
+    $('#botonEditarEmp').on('click', function(){
+        $('#vistaDatosEmp').addClass('d-none');
+        $('#formEditarEmp').removeClass('d-none');
+    });
+
+    //cancelar vuelve a la vista y deja los campos como estaban
+    $('#botonCancelarEdicion').on('click', function(){
+        $('#editDenominacion').val($('#verDenominacion').text());
+        $('#editCorreo').val($('#verCorreo').text());
+        $('#editArea').val($('#verArea').text());
+        $('#formEditarEmp').addClass('d-none');
+        $('#vistaDatosEmp').removeClass('d-none');
     });
 });

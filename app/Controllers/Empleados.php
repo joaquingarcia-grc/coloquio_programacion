@@ -32,19 +32,36 @@ class Empleados extends BaseController{
         echo view('empleados/empleados');
         echo  view('footer');
     }
-
+    public function insertar(){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        // Datos que llegan por POST
+        $denominacion = $this->request->getPost('denominacion');
+        $correo = trim($this->request->getPost('correo'));
+        $area = $this->request->getPost('area');
+        // Traemos el examen al que se le quiere cargar la pregunta y el id del usuario logueado
+        $id_logueado = $this->sesion->get('id');
+        // Si pasa las validaciones se guarda
+        $this->empleados->save([
+            'denominacion'=> $denominacion,
+            'correo' => $correo,
+            'area' => $area,
+            'id_usuario' => $id_logueado
+        ]);
+        //damos una respuesta luego de guardar, con el id nuevo
+        $id = $this->empleados->getInsertID();
+        echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Empleado cargado exitosamente']);
+        exit;
+    }
     public function api_empleados(){
        //Esta funcion devuelve el listado de usuarios en formato json
        //Traemos todos los usuarios activos, del más nuevo al más viejo
-       $empleados =    $this->empleados->select('empleados.*, usuarios.denominacion AS cargado_por')
-                       ->join('usuarios', 'usuarios.id = empleados.id_usuario')
-                       ->orderBy('empleados.id','DESC')
+       $empleados =    $this->empleados
+                       ->where('id_usuario', $this->sesion->id)
+                       ->orderBy('id','DESC')
                        ->findAll();
        //Armamos los datos y los devolvemos como json
        $datos = ['empleados'=>$empleados];
        return $this->response->setJSON($datos);
    }
-
-
-
 }

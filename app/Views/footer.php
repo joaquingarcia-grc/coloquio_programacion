@@ -17,7 +17,6 @@
     <script src='<?php echo base_url();?>js/empleados.js'></script>
     <script src='<?php echo base_url();?>js/calendario.js'></script>
     <script src='<?php echo base_url();?>js/script.js'></script>
-    <script src="<?php echo base_url();?>js/usuarios.js"></script>
     <script src="<?php echo base_url();?>js/login.js"></script>
 </body>
 </html>

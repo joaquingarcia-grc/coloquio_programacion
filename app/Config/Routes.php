@@ -15,6 +15,7 @@ $routes->get('/usuarios', 'Usuarios::index');
 $routes->get('usuarios/api','Usuarios::api_usuarios');
 
 $routes->get('/empleados', 'Empleados::index');
+$routes->post('/empleados/insertar', 'Empleados::insertar');
 $routes->get('empleados/api','Empleados::api_empleados');
 
 

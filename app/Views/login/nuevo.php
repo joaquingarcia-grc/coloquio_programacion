@@ -29,7 +29,7 @@
     						<input type="password" class="form-control" id="pswd" name="pswd">
     					</div>
     					<div class="botones">
-    						<button type="reset" class="btn btn-cancelar">Cancelar</button>
+    						<a type="submit" class="btn btn-cancelar" href="<?php echo base_url();?>registro/">Cancelar</a>
     						<button type="submit" class="btn btn-iniciar">Registrar</button>
     					</div>
     				</form>

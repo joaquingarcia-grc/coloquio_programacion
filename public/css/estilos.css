@@ -483,3 +483,13 @@ body.menu-toggle .contenido {
     height: auto;
     margin: 0 auto;
 }
+/* ---------- Mensaje simple ---------- */
+#mensaje {
+    position: fixed;
+    top: calc(var(--alto-superior) + 16px);
+    right: 24px;
+    min-width: 260px;
+    margin: 0;
+    z-index: 1100;
+    box-shadow: 0 6px 20px rgba(60, 35, 15, 0.14);
+}
