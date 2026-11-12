@@ -24,14 +24,28 @@ class Liquidaciones extends BaseController{
     public function index(){
 
         $usr_logueado = $this->sesion->get('denominacion');
+        $empleados = $this->empleados->findAll();
         
         $datos = [  'titulo' => 'Liquidacion de sueldos',
-                    'usuario'=>$usr_logueado];
+                    'usuario'=>$usr_logueado,
+                    'empleados' => $empleados];
 
         // Se arma la página: encabezado, formulario y pie
         echo view('head',$datos);
         echo view('liquidaciones/liquidaciones');
         echo  view('footer');
+    }
+    public function api_liquidaciones(){
+       //Esta funcion devuelve el listado de usuarios en formato json
+       //Traemos todos los usuarios activos, del más nuevo al más viejo
+       $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, empleados.denominacion AS empleado')
+                       ->where('liquidaciones.id_usuario', $this->sesion->id)
+                       ->join('empleados', 'empleados.id = id_empleado')
+                       ->orderBy('liquidaciones.id','DESC')
+                       ->findAll();
+       //Armamos los datos y los devolvemos como json
+       $datos = ['liquidaciones'=>$liquidaciones];
+       return $this->response->setJSON($datos);
     }
 
 

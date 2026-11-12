@@ -12,8 +12,9 @@
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script>
     <script>
         const BASE = "<?php echo base_url();?>";
+        const VEMP = <?= json_encode($empleados) ?>;
     </script>
-    <script src='<?php echo base_url();?>js/liquidaciones.js'></script> 
+    <script src='<?php echo base_url();?>js/liquidaciones.js'></script>
     <script src='<?php echo base_url();?>js/empleados.js'></script>
     <script src='<?php echo base_url();?>js/calendario.js'></script>
     <script src='<?php echo base_url();?>js/script.js'></script>

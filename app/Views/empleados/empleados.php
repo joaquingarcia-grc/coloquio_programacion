@@ -87,13 +87,19 @@
                             <p class="mb-2"><strong>Nombre y apellido:</strong> <span id="verDenominacion"></span></p>
                             <p class="mb-2"><strong>Correo:</strong> <span id="verCorreo"></span></p>
                             <p class="mb-3"><strong>Área:</strong> <span id="verArea"></span></p>
-                            <div class="acciones-formulario">
-                                <button type="button" class="boton-secundario" id="botonEditarEmp" title="Editar">
-                                    <i class="fas fa-pen"></i>
+                            <!-- imprimir a la izquierda, aparte; lapiz y tachito a la derecha -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="button" class="btn btn-outline-secondary" id="botonImprimirEmp" title="Imprimir">
+                                    <i class="fas fa-print"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-danger" id="botonEliminarEmp" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="acciones-formulario">
+                                    <button type="button" class="boton-secundario" id="botonEditarEmp" title="Editar">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" id="botonEliminarEmp" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <!-- formulario de edicion, arranca oculto -->
@@ -121,11 +127,29 @@
                             </div>
                             <div class="col-12 acciones-formulario">
                                 <button type="button" class="boton-secundario" id="botonCancelarEdicion">Cancelar</button>
-                                <button type="button" class="boton-principal" id="botonGuardarEdicion">
+                                <button type="submit" class="boton-principal" id="botonGuardarEdicion">
                                     <i class="fas fa-save"></i> Guardar
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal de confirmacion para borrar empleado -->
+        <div class="modal fade" id="modalBorradoEMP" tabindex="-1" aria-labelledby="tituloModalBorradoEMP" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloModalBorradoEMP"><i class="fas fa-trash"></i> Borrar empleado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>¿Seguro que querés borrar este empleado?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="boton-secundario" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="btnBorradoEMP">Borrar</button>
                     </div>
                 </div>
             </div>

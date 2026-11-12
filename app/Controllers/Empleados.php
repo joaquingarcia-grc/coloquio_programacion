@@ -53,6 +53,74 @@ class Empleados extends BaseController{
         echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Empleado cargado exitosamente']);
         exit;
     }
+    
+    public function borrar($id){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        // Id del usuario logueado y el empleado que se quiere borrar
+        $id_logueado = $this->sesion->get('id');
+        $empleado = $this->empleados->find($id);
+        // Solo el dueño del empleado puede borrarlo
+        if ($empleado['id_usuario'] != $id_logueado) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Usted no es el dueño del empleado']);
+            exit;
+        }else{//Es el dueño: se borra (borrado lógico, va a la papelera)
+            $this->empleados->delete($id);
+            echo json_encode(['exito' => true, 'mensaje' => 'Borrado exitosamente']);
+            exit;
+        }
+    }
+    public function actualizar($id){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        // Datos que llegan por POST, el id del usuario logueado y el empleado que se quiere actualizar
+        $denominacion = $this->request->getPost('denominacion');
+        $correo = trim($this->request->getPost('correo'));
+        $area = $this->request->getPost('area');
+        $id_logueado = $this->sesion->get('id');
+        $empleado = $this->empleados->find($id);
+        // Solo el dueño del empleado puede actualizarlo
+        if ($empleado['id_usuario'] != $id_logueado) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Usted no es el dueño del empleado']);
+            exit;
+        }else{//Es el dueño: se actualiza
+            $this->empleados->update($id, [
+                'denominacion' => $denominacion,
+                'correo' => $correo,
+                'area' => $area
+            ]);
+            echo json_encode(['exito' => true, 'mensaje' => 'Empleado actualizado exitosamente']);
+            exit;
+        }
+    }
+    public function papelera(){
+
+        $usr_logueado = $this->sesion->get('denominacion');
+        
+        $datos = [  'titulo' => 'Liquidacion de sueldos',
+                    'usuario'=>$usr_logueado];
+
+        // Se arma la página: encabezado, formulario y pie
+        echo view('head',$datos);
+        echo view('empleados/papelera');
+        echo  view('footer');
+    }
+    public function recuperacion($id){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        // Id del usuario logueado y el empleado que esta en la papelera
+        $id_logueado = $this->sesion->get('id');
+        $empleado = $this->empleados->withDeleted()->find($id);
+        // Solo el dueño del empleado puede recuperarlo
+        if ($empleado['id_usuario'] != $id_logueado) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Usted no es el dueño del empleado']);
+            exit;
+        }else{//Es el dueño: lo recuperamos sacandole la fecha de baja
+            $this->empleados->update($id, ['fecha_baja' => null]);
+            echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Empleado recuperado correctamente']);
+            exit;
+        }
+    }
     public function api_empleados(){
        //Esta funcion devuelve el listado de usuarios en formato json
        //Traemos todos los usuarios activos, del más nuevo al más viejo
@@ -63,5 +131,17 @@ class Empleados extends BaseController{
        //Armamos los datos y los devolvemos como json
        $datos = ['empleados'=>$empleados];
        return $this->response->setJSON($datos);
-   }
+    }
+    public function api_empleados_borrados(){
+       //Esta funcion devuelve el listado de usuarios en formato json
+       //Traemos todos los usuarios activos, del más nuevo al más viejo
+       $empleados =    $this->empleados
+                       ->where('id_usuario', $this->sesion->id)
+                       ->orderBy('id','DESC')
+                       ->onlyDeleted()
+                       ->findAll();
+       //Armamos los datos y los devolvemos como json
+       $datos = ['empleados'=>$empleados];
+       return $this->response->setJSON($datos);
+    }
 }
