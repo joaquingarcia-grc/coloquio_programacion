@@ -30,7 +30,7 @@ $routes->post('/liquidaciones/actualizar/(:num)', 'Liquidaciones::actualizar/$1'
 $routes->get('/liquidaciones/papelera', 'Liquidaciones::papelera');
 $routes->post('/liquidaciones/recuperacion/(:num)','Liquidaciones::recuperacion/$1');
 $routes->get('liquidaciones/api','Liquidaciones::api_liquidaciones');
-$routes->get('empleados/api2','Liquidaciones::api_empleados_borrados');
+$routes->get('liquidaciones/api2','Liquidaciones::api_liquidaciones_borrados');
 
 
 $routes->get('/sueldos', 'Sueldos::index');

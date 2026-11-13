@@ -23,9 +23,11 @@ class Sueldos extends BaseController{
     public function index(){
 
         $usr_logueado = $this->sesion->get('denominacion');
+        $empleados = $this->empleados->findAll();
         
         $datos = [  'titulo' => 'Liquidacion de sueldos',
-                    'usuario'=>$usr_logueado];
+                    'usuario'=>$usr_logueado,
+                    'empleados' => $empleados];
 
         // Se arma la página: encabezado, formulario y pie
         echo view('head',$datos);
