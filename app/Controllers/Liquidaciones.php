@@ -56,6 +56,22 @@ class Liquidaciones extends BaseController{
         echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Empleado cargado exitosamente']);
         exit;
     }
+    public function borrar($id){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        // Id del usuario logueado y la liquidacion que se quiere borrar
+        $id_logueado = $this->sesion->get('id');
+        $liquidacion = $this->liquidaciones->find($id);
+        // Solo el dueño de la liquidacion puede borrarla
+        if ($liquidacion['id_usuario'] != $id_logueado) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Usted no es el dueño de la liquidación']);
+            exit;
+        }else{//Es el dueño: se borra (borrado lógico, va a la papelera)
+            $this->liquidaciones->delete($id);
+            echo json_encode(['exito' => true, 'mensaje' => 'Borrado exitosamente']);
+            exit;
+        }
+    }    
 
     public function papelera(){
 
@@ -71,6 +87,23 @@ class Liquidaciones extends BaseController{
         echo view('liquidaciones/papelera');
         echo  view('footer');
     }
+
+    public function recuperacion($id){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        // Id del usuario logueado y la liquidacion que esta en la papelera
+        $id_logueado = $this->sesion->get('id');
+        $liquidacion = $this->liquidaciones->withDeleted()->find($id);
+        // Solo el dueño de la liquidacion puede recuperarla
+        if ($liquidacion['id_usuario'] != $id_logueado) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Usted no es el dueño de la liquidación']);
+            exit;
+        }else{//Es el dueño: la recuperamos sacandole la fecha de baja
+            $this->liquidaciones->update($id, ['fecha_baja' => null]);
+            echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Liquidación recuperada correctamente']);
+            exit;
+        }
+    }
     public function api_liquidaciones(){
        //Esta funcion devuelve el listado de usuarios en formato json
        //Traemos todos los usuarios activos, del más nuevo al más viejo
@@ -84,15 +117,16 @@ class Liquidaciones extends BaseController{
        return $this->response->setJSON($datos);
     }
     public function api_liquidaciones_borrados(){
-       //Esta funcion devuelve el listado de usuarios en formato json
-       //Traemos todos los usuarios activos, del más nuevo al más viejo
-       $liquidaciones =    $this->liquidaciones
-                       ->where('id_usuario', $this->sesion->id)
-                       ->orderBy('id','DESC')
+       //Esta funcion devuelve el listado de liquidaciones borradas en formato json
+       //Traemos todas las liquidaciones borradas del usuario, de la más nueva a la más vieja
+       $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, empleados.denominacion AS empleado')
+                       ->where('liquidaciones.id_usuario', $this->sesion->id)
+                       ->join('empleados', 'empleados.id = id_empleado')
+                       ->orderBy('liquidaciones.id','DESC')
                        ->onlyDeleted()
                        ->findAll();
        //Armamos los datos y los devolvemos como json
-       $datos = ['empleados'=>$liquidaciones];
+       $datos = ['liquidaciones'=>$liquidaciones];
        return $this->response->setJSON($datos);
     }
 

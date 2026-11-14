@@ -1,6 +1,7 @@
 $(document).ready(function(){
     let idABorrar;//id del empleado que se va a borrar
     let idARecuperar;//id del empleado que se va a recuperar
+    let idActualizar;
     //------------------------------------------------------------------------------------------------//
     //mensaje simple de aviso, tipo: 'success', 'warning' o 'error'
     function mensajes(texto, tipo){
@@ -278,7 +279,7 @@ $(document).ready(function(){
     //formulario de editar: al enviarlo mandamos los datos nuevos al controlador
     $('#formEditarEmp').on('submit', function(e){
         e.preventDefault();//detiene el envio normal del formulario
-        const idActualizar = $(this).data('id');//el id viaja en la url, lo dejamos guardado al abrir el ojito
+        let idActualizar = $(this).data('id');//el id viaja en la url, lo dejamos guardado al abrir el ojito
         const dato = {//objeto con los datos nuevos
             denominacion: $('#editDenominacion').val(),
             correo: $('#editCorreo').val(),

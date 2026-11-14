@@ -1,6 +1,7 @@
 $(document).ready(function(){
     let idABorrar;//id de la liquidacion que se va a borrar
     let idARecuperar;//id de la liquidacion que se va a recuperar
+    let idActualizar;
     //------------------------------------------------------------------------------------------------//
     //mensaje simple de aviso, tipo: 'success', 'warning' o 'error'
     function mensajes(texto, tipo){
@@ -210,39 +211,34 @@ $(document).ready(function(){
     //los datos seran enviado una ves obtengamos la accion desde el boton del modal
     $('#formLiquidacion').on('submit', function(e){
         e.preventDefault();//detiene el envio normal del formulario
-        //si lo tipeado no coincide con ningun empleado de la lista no mandamos nada
-        if ($('#idEmpleadoLiq').val() === ''){
-            mensajes('Elegí un empleado de la lista','warning');
-        }else{
-            const dato = {//creamos un objeto con todos nuestros datos
-                id_empleado: $('#idEmpleadoLiq').val(),
-                fecha_vencimiento: $('#fechaVencimiento').val(),
-                monto: $('#monto').val()
-            }   
-            $.ajax({
-                url: BASE + 'liquidaciones/insertar',
-                method: 'POST',
-                data: dato,
-                dataType: 'json',
-                success: function(response){
-                    if (response.exito){
-                        mensajes(response.mensaje,'success');
-                        $('#formLiquidacion')[0].reset();
-                        $('#idEmpleadoLiq').val('');//el reset no limpia el hidden
-                        $('#modalLiquidacion').modal('hide');//ocultamos el modal de guardar
-                        $('#tablaDatosLiq').DataTable().destroy();
-                        cargarTablaLiquidaciones();
-                    }else if (response.papelera){
-                        mensajes('Aviso: ' + response.mensaje, 'warning');
-                    }else{
-                        mensajes('Error: ' + response.mensaje, 'error');
-                    }
-                },
-                error: function() {
-                    mensajes('Error en el servidor','error');
+        const dato = {//creamos un objeto con todos nuestros datos
+            id_empleado: $('#idEmpleadoLiq').val(),
+            fecha_vencimiento: $('#fechaVencimiento').val(),
+            monto: $('#monto').val()
+        }   
+        $.ajax({
+            url: BASE + 'liquidaciones/insertar',
+            method: 'POST',
+            data: dato,
+            dataType: 'json',
+            success: function(response){
+                if (response.exito){
+                    mensajes(response.mensaje,'success');
+                    $('#formLiquidacion')[0].reset();
+                    $('#idEmpleadoLiq').val('');//el reset no limpia el hidden
+                    $('#modalLiquidacion').modal('hide');//ocultamos el modal de guardar
+                    $('#tablaDatosLiq').DataTable().destroy();
+                    cargarTablaLiquidaciones();
+                }else if (response.papelera){
+                    mensajes('Aviso: ' + response.mensaje, 'warning');
+                }else{
+                    mensajes('Error: ' + response.mensaje, 'error');
                 }
-            });
-        }
+            },
+            error: function() {
+                mensajes('Error en el servidor','error');
+            }
+        });
     });
     //------------------------------------------------------------------------------------------------//
     //el ojito abre el modal con los datos de la liquidacion (los toma del boton, que vienen de la base)
@@ -318,41 +314,36 @@ $(document).ready(function(){
     //formulario de editar: al enviarlo mandamos los datos nuevos al controlador
     $('#formEditarLiq').on('submit', function(e){
         e.preventDefault();//detiene el envio normal del formulario
-        //si lo tipeado no coincide con ningun empleado de la lista no mandamos nada
-        if ($('#editIdEmpleadoLiq').val() === ''){
-            mensajes('Elegí un empleado de la lista','warning');
-        }else{
-            const idActualizar = $(this).data('id');//el id viaja en la url, lo dejamos guardado al abrir el ojito
-            const dato = {//objeto con los datos nuevos
-                id_empleado: $('#editIdEmpleadoLiq').val(),
-                fecha_vencimiento: $('#editFechaVencimiento').val(),
-                monto: $('#editMonto').val()
-            }
-            $.ajax({
-                url: BASE + 'liquidaciones/actualizar/' + idActualizar,
-                method: 'POST',
-                data: dato,
-                dataType: 'json',
-                success: function(response){
-                    //se actualizo: cerramos modal, avisamos y recargamos la tabla
-                    if (response.exito){
-                        $('#modalVerLiquidacion').modal('hide');
-                        mensajes('Liquidación: ' + response.mensaje, 'success');
-                        $('#tablaDatosLiq').DataTable().destroy();
-                        cargarTablaLiquidaciones();
-                    //repetido en la papelera
-                    }else if (response.papelera){
-                        mensajes('Aviso: ' + response.mensaje, 'warning');
-                    //otro error
-                    }else{
-                        mensajes('Error: ' + response.mensaje, 'error');
-                    }
-                },
-                error: function() {
-                    mensajes('Error en el servidor', 'error');
-                }
-            });
+        let idActualizar = $(this).data('id');//el id viaja en la url, lo dejamos guardado al abrir el ojito
+        const dato = {//objeto con los datos nuevos
+            id_empleado: $('#editIdEmpleadoLiq').val(),
+            fecha_vencimiento: $('#editFechaVencimiento').val(),
+            monto: $('#editMonto').val()
         }
+        $.ajax({
+            url: BASE + 'liquidaciones/actualizar/' + idActualizar,
+            method: 'POST',
+            data: dato,
+            dataType: 'json',
+            success: function(response){
+                //se actualizo: cerramos modal, avisamos y recargamos la tabla
+                if (response.exito){
+                    $('#modalVerLiquidacion').modal('hide');
+                    mensajes(response.mensaje, 'success');
+                    $('#tablaDatosLiq').DataTable().destroy();
+                    cargarTablaLiquidaciones();
+                //repetido en la papelera
+                }else if (response.papelera){
+                    mensajes('Aviso: ' + response.mensaje, 'warning');
+                //otro error
+                }else{
+                    mensajes('Error: ' + response.mensaje, 'error');
+                }
+            },
+            error: function() {
+                mensajes('Error en el servidor', 'error');
+            }
+        });
     });
     //------------------------------------------------------------------------------------------------//
     //funcion que borra las liquidaciones
@@ -376,7 +367,7 @@ $(document).ready(function(){
                 //se borro: cerramos modal, avisamos y recargamos la tabla
                 if (response.exito){
                     $('#modalBorradoLIQ').modal('hide');
-                    mensajes('Liquidación: ' + response.mensaje, 'success');
+                    mensajes(response.mensaje, 'success');
                     $('#tablaDatosLiq').DataTable().destroy();
                     cargarTablaLiquidaciones();
                 //no se pudo borrar: cerramos modal y mostramos el error
@@ -403,7 +394,7 @@ $(document).ready(function(){
             success: function(response) {
                 //se recupero: avisamos y recargamos la tabla de la papelera
                 if(response.exito){
-                    mensajes('Liquidación: ' + response.mensaje, 'success');
+                    mensajes(response.mensaje, 'success');
                     $('#tablaDatosPapLiq').DataTable().destroy();
                     cargarTablaPapeleraLiq();
 
