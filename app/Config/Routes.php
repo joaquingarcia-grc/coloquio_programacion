@@ -9,7 +9,7 @@ $routes->get('/registro', 'Login::index');
 $routes->get('/registro/nuevo', 'Login::nuevo');
 $routes->post('/registro/validacion', 'Login::validacion');
 $routes->post('registro/insertar', 'Login::insertar');
-
+$routes->get('/registro/salir', 'Login::salir');
 
 $routes->get('/empleados', 'Empleados::index');
 $routes->post('/empleados/insertar', 'Empleados::insertar');

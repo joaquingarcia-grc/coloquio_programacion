@@ -130,3 +130,21 @@
             </div>
         </div>
     </div>
+    <!-- modal de confirmacion para cerrar sesion -->
+    <div class="modal fade" id="modalSalir" tabindex="-1" aria-labelledby="tituloModalSalir" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloModalSalir">Cerrar sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que querés salir?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="boton-secundario" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="boton-principal" id="btnConfirmarSalir">Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>

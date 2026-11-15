@@ -109,6 +109,15 @@ class Login extends BaseController{
             }
             exit;
         }
+        
+    }
+
+    public function salir(){
+        //Cerramos la sesion, borrando todos sus datos
+        $sesion = session();
+        $sesion->destroy();
+        //Mandamos al usuario a la pagina de registro
+        return redirect()->to(base_url() . 'registro/');
     }
 
 }

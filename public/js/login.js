@@ -93,4 +93,14 @@ $(document).ready(function(){
             } 
         });
     });
+    //------------------------------------------------------------------------------------------------//
+    //al apretar salir en el menu del usuario se abre el modal de confirmacion
+    $('#btnSalir').on('click', function(){
+        $('#modalSalir').modal('show');
+    });
+    //------------------------------------------------------------------------------------------------//
+    //si confirma, lo mandamos a la ruta que cierra la sesion (el controlador lo redirige solo)
+    $('#btnConfirmarSalir').on('click', function(){
+        window.location.href = BASE + 'registro/salir';
+    });
 });

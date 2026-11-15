@@ -4,9 +4,11 @@ namespace App\Controllers;
 use App\Models\UsuariosModel;
 use App\Models\EmpleadosModel;
 use App\Models\LiquidacionesModel;
+use App\Models\ActividadesModel;
 
 class Empleados extends BaseController{
 
+    protected $actividades;
     protected $sesion;
     protected $usuarios;
     protected $empleados;
@@ -15,12 +17,18 @@ class Empleados extends BaseController{
     public function __construct(){
         //Se inicia la sesión y se instancian los modelos
         $this->sesion = session();
+        $this->actividades = new ActividadesModel();
         $this->usuarios = new UsuariosModel();
         $this->empleados = new EmpleadosModel();
         $this->liquidaciones = new LiquidacionesModel();
     }
 
     public function index(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
 
         $usr_logueado = $this->sesion->get('denominacion');
         $empleados = $this->empleados->findAll();
@@ -35,6 +43,11 @@ class Empleados extends BaseController{
         echo  view('footer');
     }
     public function insertar(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Datos que llegan por POST
@@ -50,13 +63,26 @@ class Empleados extends BaseController{
             'area' => $area,
             'id_usuario' => $id_logueado
         ]);
-        //damos una respuesta luego de guardar, con el id nuevo
+        //id del empleado que se acaba de guardar
         $id = $this->empleados->getInsertID();
+        // Se guarda la accion: quien la hizo, sobre que tabla, que id y que accion fue
+        $this->actividades->save([
+            'id_usuario' => $id_logueado,
+            'tabla' => 'empleados',
+            'id_dato' => $id,
+            'accion' => 'alta'
+        ]);
+        //damos una respuesta luego de guardar, con el id nuevo
         echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Empleado cargado exitosamente']);
         exit;
     }
     
     public function borrar($id){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Id del usuario logueado y el empleado que se quiere borrar
@@ -68,11 +94,23 @@ class Empleados extends BaseController{
             exit;
         }else{//Es el dueño: se borra (borrado lógico, va a la papelera)
             $this->empleados->delete($id);
+            // Se guarda la accion: quien la hizo, sobre que tabla, que id y que accion fue
+            $this->actividades->save([
+                'id_usuario' => $id_logueado,
+                'tabla' => 'empleados',
+                'id_dato' => $id,
+                'accion' => 'baja'
+            ]);
             echo json_encode(['exito' => true, 'mensaje' => 'Empleado borrado exitosamente']);
             exit;
         }
     }
     public function actualizar($id){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Datos que llegan por POST, el id del usuario logueado y el empleado que se quiere actualizar
@@ -91,11 +129,23 @@ class Empleados extends BaseController{
                 'correo' => $correo,
                 'area' => $area
             ]);
+            // Se guarda la accion: quien la hizo, sobre que tabla, que id y que accion fue
+            $this->actividades->save([
+                'id_usuario' => $id_logueado,
+                'tabla' => 'empleados',
+                'id_dato' => $id,
+                'accion' => 'modificacion'
+            ]);
             echo json_encode(['exito' => true, 'mensaje' => 'Empleado actualizado exitosamente']);
             exit;
         }
     }
     public function papelera(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
 
         $usr_logueado = $this->sesion->get('denominacion');
         $empleados = $this->empleados->findAll();
@@ -110,6 +160,11 @@ class Empleados extends BaseController{
         echo  view('footer');
     }
     public function recuperacion($id){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Id del usuario logueado y el empleado que esta en la papelera
@@ -126,6 +181,11 @@ class Empleados extends BaseController{
         }
     }
     public function api_empleados(){
+       // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+       // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+       if(!isset($this->sesion->id)){
+           return redirect()->to(base_url() . "registro/");
+       }
        //Esta funcion devuelve el listado de usuarios en formato json
        //Traemos todos los usuarios activos, del más nuevo al más viejo
        $empleados =    $this->empleados
@@ -137,6 +197,11 @@ class Empleados extends BaseController{
        return $this->response->setJSON($datos);
     }
     public function api_empleados_borrados(){
+       // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+       // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+       if(!isset($this->sesion->id)){
+           return redirect()->to(base_url() . "registro/");
+       }
        //Esta funcion devuelve el listado de usuarios en formato json
        //Traemos todos los usuarios activos, del más nuevo al más viejo
        $empleados =    $this->empleados

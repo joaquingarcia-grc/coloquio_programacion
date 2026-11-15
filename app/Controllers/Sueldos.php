@@ -21,6 +21,11 @@ class Sueldos extends BaseController{
     }
 
     public function index(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
 
         $usr_logueado = $this->sesion->get('denominacion');
         $empleados = $this->empleados->findAll();

@@ -24,6 +24,11 @@ class Liquidaciones extends BaseController{
     }
 
     public function index(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
 
         $usr_logueado = $this->sesion->get('denominacion');
         $empleados = $this->empleados->findAll();
@@ -38,6 +43,11 @@ class Liquidaciones extends BaseController{
         echo  view('footer');
     }
     public function insertar(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Datos que llegan por POST
@@ -74,6 +84,11 @@ class Liquidaciones extends BaseController{
         }
     }
     public function borrar($id){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Id del usuario logueado y la liquidacion que se quiere borrar
@@ -97,6 +112,11 @@ class Liquidaciones extends BaseController{
         }
     }
     public function actualizar($id){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Datos que llegan por POST
@@ -131,6 +151,11 @@ class Liquidaciones extends BaseController{
         }
     }  
     public function papelera(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
 
         $usr_logueado = $this->sesion->get('denominacion');
         $empleados = $this->empleados->findAll();
@@ -146,6 +171,11 @@ class Liquidaciones extends BaseController{
     }
 
     public function recuperacion($id){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
         // Id del usuario logueado y la liquidacion que esta en la papelera
@@ -162,6 +192,11 @@ class Liquidaciones extends BaseController{
         }
     }
     public function api_liquidaciones(){
+       // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+       // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+       if(!isset($this->sesion->id)){
+           return redirect()->to(base_url() . "registro/");
+       }
        //Esta funcion devuelve el listado de usuarios en formato json
        //Traemos todos los usuarios activos, del más nuevo al más viejo
        $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, empleados.denominacion AS empleado')
@@ -174,6 +209,11 @@ class Liquidaciones extends BaseController{
        return $this->response->setJSON($datos);
     }
     public function api_liquidaciones_borrados(){
+       // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+       // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+       if(!isset($this->sesion->id)){
+           return redirect()->to(base_url() . "registro/");
+       }
        //Esta funcion devuelve el listado de liquidaciones borradas en formato json
        //Traemos todas las liquidaciones borradas del usuario, de la más nueva a la más vieja
        $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, empleados.denominacion AS empleado')
@@ -187,6 +227,11 @@ class Liquidaciones extends BaseController{
        return $this->response->setJSON($datos);
     }
     public function api_calendario(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         //Esta funcion devuelve todas las liquidaciones del usuario (activas y vencidas) en formato json para el calendario
         //withDeleted trae tambien las que tienen fecha_baja, que son las vencidas dadas de baja
         $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, empleados.denominacion AS empleado')
@@ -201,6 +246,11 @@ class Liquidaciones extends BaseController{
     }
 
     public function reporte(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
         // id del usuario logueado (cambialo si en tu sesion se llama distinto)
         $id_usuario = $this->sesion->get('id');
         // dias de aviso, para no dejarlo hardcodeado abajo
