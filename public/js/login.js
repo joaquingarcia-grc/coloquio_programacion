@@ -94,6 +94,39 @@ $(document).ready(function(){
         });
     });
     //------------------------------------------------------------------------------------------------//
+    //formulario de configuracion: al enviarlo mandamos los datos nuevos al controlador
+    $('#formConfiguracion').on('submit', function(e){
+        e.preventDefault();//detiene el envio normal del formulario
+        let idActualizar = $(this).data('id');//el id del usuario viaja en la url, esta guardado en el data-id del formulario
+        const dato = {//objeto con los datos nuevos
+            denominacion : $('#denominacion').val(),
+            correo : $('#correo').val(),
+            pswd : $('#pswd').val()//si va vacia el controlador deja la que tenia
+        }
+        $.ajax({
+            url: BASE + 'usuarios/actualizar/' + idActualizar,
+            method: 'POST',
+            data: dato,
+            dataType: 'json',
+            success: function(response){
+                //se actualizo: avisamos y limpiamos la contraseña
+                if (response.exito){
+                    mensaje(response.mensaje, 'exito');
+                    $('#pswd').val('');
+                //repetido en la papelera
+                }else if (response.papelera){
+                    mensaje('Aviso: ' + response.mensaje, 'warning');
+                //otro error
+                }else{
+                    mensaje('Error: ' + response.mensaje, 'error');
+                }
+            },
+            error: function(){//si existiese un error en el servidor podria verse un mensaje de error
+                mensaje('Error en el servidor', 'error');
+            }
+        });
+    });
+    //------------------------------------------------------------------------------------------------//
     //al apretar salir en el menu del usuario se abre el modal de confirmacion
     $('#btnSalir').on('click', function(){
         $('#modalSalir').modal('show');

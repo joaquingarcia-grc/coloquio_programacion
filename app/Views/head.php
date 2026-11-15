@@ -32,7 +32,8 @@
                 <i class="fas fa-user"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><button class="dropdown-item" id="btnActividad">Actividad</button></li>
+                <li><a class="dropdown-item" id="btnConfiguracion" href="<?php echo base_url()?>configuracion">Configuración</a></li>
+                <li><a class="dropdown-item" id="btnActividad" href="<?php echo base_url()?>actividad">Actividad</a></li>
                 <li><button class="dropdown-item" id='btnSalir'>Cerrar sesión</button></li>
             </ul>
         </div>

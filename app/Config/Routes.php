@@ -33,3 +33,6 @@ $routes->get('liquidaciones/calendario', 'Liquidaciones::api_calendario');
 
 
 $routes->get('calendario', 'Sueldos::index');
+$routes->get('actividad', 'Sueldos::actividad');
+$routes->get('configuracion', 'Sueldos::configuracion');
+$routes->post('usuarios/actualizar/(:num)', 'Sueldos::actualizar/$1');

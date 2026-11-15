@@ -71,7 +71,7 @@ class Empleados extends BaseController{
             'tabla' => 'empleados',
             'id_dato' => $id,
             'accion' => 'alta'
-        ]);
+        ]);//doble insert y actualizar me inspire en los codigos de esta pagina https://es.stackoverflow.com/questions/499670/insert-multiple-en-codeigniter
         //damos una respuesta luego de guardar, con el id nuevo
         echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Empleado cargado exitosamente']);
         exit;

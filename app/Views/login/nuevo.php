@@ -16,17 +16,21 @@
     			<div class="card-text">
                     <div id="mensaje" class="alert d-none"></div>
     				<form id='formularioRegistro'>
+    					<!-- aclaracion de los campos obligatorios, en rojo -->
+    					<p class="text-danger small">Los campos con * son obligatorios.</p>
     					<div class="mb-3">
-    						<label for="denominacion" class="form-label">Usuario</label>
-    						<input type="text" class="form-control" id="denominacion" name="denominacion">
+    						<label for="denominacion" class="form-label">Usuario <span class="text-danger">*</span></label>
+    						<input type="text" class="form-control" id="denominacion" name="denominacion" required>
     					</div>
     					<div class="mb-3">
-    						<label for="correo" class="form-label">Correo</label>
-    						<input type="email" class="form-control" id="correo" name="correo">
+    						<label for="correo" class="form-label">Correo <span class="text-danger">*</span></label>
+    						<input type="email" class="form-control" id="correo" name="correo" required>
     					</div>
     					<div class="mb-3">
-    						<label for="pswd" class="form-label">Contraseña</label>
-    						<input type="password" class="form-control" id="pswd" name="pswd">
+    						<label for="pswd" class="form-label">Contraseña <span class="text-danger">*</span></label>
+    						<input type="password" class="form-control" id="pswd" name="pswd" required>
+    						<!-- advertencia de como tiene que ser la contraseña -->
+    						<div class="form-text">La contraseña debe tener como mínimo 8 caracteres y un carácter especial.</div>
     					</div>
     					<div class="botones">
     						<a type="submit" class="btn btn-cancelar" href="<?php echo base_url();?>registro/">Cancelar</a>
