@@ -27,10 +27,6 @@ $(document).ready(function(){
             method: 'GET',
             dataType: 'json',
             success: function(response) {
-                // si ya estaba armada la destruyo para que tome la config nueva
-                if ($.fn.DataTable.isDataTable('#tablaDatosEmp')) {
-                    $('#tablaDatosEmp').DataTable().destroy();
-                }
                 let filasEmpleados = '';
                 response.empleados.forEach(empleado => {
                     // una fila por cada empleado
@@ -106,10 +102,6 @@ $(document).ready(function(){
             method: 'GET',
             dataType: 'json',
             success: function(response) {
-                // si ya estaba armada la destruyo para que tome la config nueva
-                if ($.fn.DataTable.isDataTable('#tablaDatosPap')) {
-                    $('#tablaDatosPap').DataTable().destroy();
-                }
                 //armamos las filas de los empleados borrados
                 let filasPapelera = '';
                 response.empleados.forEach(empleado => {
@@ -294,7 +286,7 @@ $(document).ready(function(){
                 //se actualizo: cerramos modal, avisamos y recargamos la tabla
                 if (response.exito){
                     $('#modalVerEmpleado').modal('hide');
-                    mensajes('Empleado: ' + response.mensaje, 'success');
+                    mensajes( response.mensaje, 'success');
                     $('#tablaDatosEmp').DataTable().destroy();
                     cargarTablaEmpleados();
                 //repetido en la papelera
@@ -332,7 +324,7 @@ $(document).ready(function(){
                 //se borro: cerramos modal, avisamos y recargamos la tabla
                 if (response.exito){
                     $('#modalBorradoEMP').modal('hide');
-                    mensajes('Empleado: ' + response.mensaje, 'success');
+                    mensajes(response.mensaje, 'success');
                     $('#tablaDatosEmp').DataTable().destroy();
                     cargarTablaEmpleados();
                 //no se pudo borrar: cerramos modal y mostramos el error
@@ -359,7 +351,7 @@ $(document).ready(function(){
             success: function(response) {
                 //se recupero: avisamos y recargamos la tabla de la papelera
                 if(response.exito){
-                    mensajes('Empleado: ' + response.mensaje, 'success');
+                    mensajes(response.mensaje, 'success');
                     $('#tablaDatosPap').DataTable().destroy();
                     cargarTablaPapeleraEmp();
 

@@ -68,7 +68,7 @@ class Empleados extends BaseController{
             exit;
         }else{//Es el dueño: se borra (borrado lógico, va a la papelera)
             $this->empleados->delete($id);
-            echo json_encode(['exito' => true, 'mensaje' => 'Borrado exitosamente']);
+            echo json_encode(['exito' => true, 'mensaje' => 'Empleado borrado exitosamente']);
             exit;
         }
     }

@@ -44,17 +44,24 @@ class Liquidaciones extends BaseController{
         $fecha_vencimiento = $this->request->getPost('fecha_vencimiento');
         // Id del usuario logueado
         $id_logueado = $this->sesion->get('id');
-        // Se guarda la liquidacion (la fecha_alta la carga sola el modelo)
-        $this->liquidaciones->save([
-            'id_empleado' => $id_empleado,
-            'monto' => $monto,
-            'fecha_vencimiento' => $fecha_vencimiento,
-            'id_usuario' => $id_logueado
-        ]);
-        //damos una respuesta luego de guardar, con el id nuevo
-        $id = $this->liquidaciones->getInsertID();
-        echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Liquidación cargada exitosamente']);
-        exit;
+        // Buscamos el empleado: tiene que existir (no borrado) y ser del usuario logueado
+        $empleado = $this->empleados->where('id_usuario', $id_logueado)->find($id_empleado);
+        if (!$empleado) {
+            echo json_encode(['exito' => false, 'mensaje' => 'El empleado no existe']);
+            exit;
+        }else{
+            // Se guarda la liquidacion (la fecha_alta la carga sola el modelo)
+            $this->liquidaciones->save([
+                'id_empleado' => $id_empleado,
+                'monto' => $monto,
+                'fecha_vencimiento' => $fecha_vencimiento,
+                'id_usuario' => $id_logueado
+            ]);
+            //damos una respuesta luego de guardar, con el id nuevo
+            $id = $this->liquidaciones->getInsertID();
+            echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Liquidación cargada exitosamente']);
+            exit;
+        }
     }
     public function borrar($id){
         //Esto nos indica que esperamos peticiones json

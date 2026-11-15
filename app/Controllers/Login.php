@@ -40,7 +40,7 @@ class Login extends BaseController{
                 $sesion = session();
                 $sesion->set($data_sesion);
                 
-                echo json_encode(['exito' => true, 'mensaje' => 'Bienvenido', 'redirigir' => base_url('/sueldos')]);
+                echo json_encode(['exito' => true, 'mensaje' => 'Bienvenido', 'redirigir' => base_url('/calendario')]);
                 exit;              
             }else{
                 //La contraseña no coincide

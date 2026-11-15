@@ -113,9 +113,9 @@
                                 <label for="editEmpleadoLiq" class="form-label">Empleado</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="editEmpleadoLiq" name="empleado" list="listaEmpleadosLiq" autocomplete="off">
+                                    <input type="text" class="form-control" id="editEmpleadoLiq" name="empleado" autocomplete="off" readonly>
                                 </div>
-                                <!-- id del empleado elegido, lo completa el js -->
+                                <!-- id del empleado, no se puede cambiar al editar -->
                                 <input type="hidden" id="editIdEmpleadoLiq" name="id_empleado">
                             </div>
                             <div class="col-12">

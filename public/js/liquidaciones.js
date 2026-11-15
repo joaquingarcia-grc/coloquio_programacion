@@ -54,10 +54,6 @@ $(document).ready(function(){
             method: 'GET',
             dataType: 'json',
             success: function(response) {
-                // si ya estaba armada la destruyo para que tome la config nueva
-                if ($.fn.DataTable.isDataTable('#tablaDatosLiq')) {
-                    $('#tablaDatosLiq').DataTable().destroy();
-                }
                 let filasLiquidaciones = '';
                 response.liquidaciones.forEach(liquidacion => {
                     // una fila por cada liquidacion
@@ -134,10 +130,6 @@ $(document).ready(function(){
             method: 'GET',
             dataType: 'json',
             success: function(response) {
-                // si ya estaba armada la destruyo para que tome la config nueva
-                if ($.fn.DataTable.isDataTable('#tablaDatosPapLiq')) {
-                    $('#tablaDatosPapLiq').DataTable().destroy();
-                }
                 //armamos las filas de las liquidaciones borradas
                 let filasPapelera = '';
                 response.liquidaciones.forEach(liquidacion => {
