@@ -20,5 +20,6 @@
     <script src='<?php echo base_url();?>js/script.js'></script>
     <script src="<?php echo base_url();?>js/login.js"></script>
     <script src='<?php echo base_url();?>js/reporte.js'></script>
+    <script src='<?php echo base_url();?>js/calculadora.js'></script>
 </body>
 </html>

@@ -171,6 +171,11 @@ $(document).ready(function(){
         });
     };
 
+    //el boton cancelar limpia el formulario y cierra el modal de cargar
+    $('#botonCancelarEmp').on('click', function(){
+        $('#formEmpleado')[0].reset();
+    });
+
     //los datos seran enviado una ves obtengamos la accion desde el boton del modal
     $('#formEmpleado').on('submit', function(e){
         e.preventDefault();//detiene el envio normal del formulario

@@ -18,8 +18,12 @@
         <button class="boton-menu" id="botonMenu" type="button">
             <i class="fas fa-bars"></i>
         </button>
+        <!-- boton de la calculadora de sueldo -->
+        <button type="button" class="btn btn-sm btn-light border-0 text-secondary ms-auto me-2" id="btnCalculadora" data-bs-toggle="modal" data-bs-target="#modalCalculo" title="Calcular sueldo">
+            <i class="fas fa-calculator"></i> Calcular sueldo
+        </button>
         <!-- boton del reporte de avisos -->
-        <button type="button" class="btn btn-sm btn-light border-0 text-secondary position-relative ms-auto me-2" id="btnReporte" title="Ver reporte">
+        <button type="button" class="btn btn-sm btn-light border-0 text-secondary position-relative me-2" id="btnReporte" title="Ver reporte">
             <i class="fas fa-bell"></i> Ver reporte
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="cantAvisos">0</span>
         </button>
@@ -83,3 +87,46 @@
             </button>
         </div>
     </aside>
+    <!-- modal de la calculadora de sueldo -->
+    <div class="modal fade" id="modalCalculo" tabindex="-1" aria-labelledby="tituloModalCalculo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloModalCalculo"><i class="fas fa-calculator"></i> Calcular sueldo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- tipo de calculo: por hora o por dia -->
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tipoCalc" id="tipoHora" checked>
+                            <label class="form-check-label" for="tipoHora">Por hora</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tipoCalc" id="tipoDia">
+                            <label class="form-check-label" for="tipoDia">Por día</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="valorCalc" class="form-label" id="textoValorCalc">Valor por hora</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            <input type="number" class="form-control" id="valorCalc" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidadCalc" class="form-label" id="textoCantidadCalc">Cantidad de horas</label>
+                        <input type="number" class="form-control" id="cantidadCalc" step="0.01" min="0">
+                    </div>
+                    <!-- resultado, el js lo muestra -->
+                    <div id="resultadoCalc" class="alert d-none mb-0"></div>
+                </div>
+                <div class="modal-footer justify-content-start">
+                    <button type="button" class="boton-principal" id="btnCalcularSueldo">
+                        <i class="fas fa-calculator"></i> Calcular
+                    </button>
+                    <button type="button" class="boton-secundario" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
