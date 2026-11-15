@@ -1,189 +1,156 @@
 $(document).ready(function(){
-
-    var nombresMes = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    var hoy = new Date();
-    var mes = hoy.getMonth();
-    var anio = hoy.getFullYear();
-    // las liquidaciones que trae el servidor y las marcas por fecha (asi no recorro todo por cada celda)
-    var liquidaciones = [];
-    var marcas = {};
-
-    // arma el texto yyyy-mm-dd igual que viene de la base, sin pasar por Date (evita lios de zona horaria)
-    function armarFecha(a, m, d) {
-        var mm = '' + (m + 1);
-        var dd = '' + d;
-        if (mm.length < 2) {
-            mm = '0' + mm;
-        }
-        if (dd.length < 2) {
-            dd = '0' + dd;
-        }
-        return a + '-' + mm + '-' + dd;
+    const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    let fechaVista = new Date();//mes que se esta viendo
+    fechaVista.setDate(1);//siempre en el dia 1 para que no se salte meses al navegar
+    let liquidaciones = [];//todas las liquidaciones del usuario, activas y vencidas
+    //------------------------------------------------------------------------------------------------//
+    //arma una fecha en texto aaaa-mm-dd, igual que viene de la base
+    function aTexto(anio, mes, dia){
+        return anio + '-' + String(mes + 1).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
     }
-
-    // si la fecha todavia no tiene marcas la crea vacia
-    function asegurarMarca(fecha) {
-        if (marcas[fecha] === undefined) {
-            marcas[fecha] = { vencida: false, pendiente: false, liquidar: false };
-        }
+    //fecha de hoy en texto para comparar con las de las liquidaciones
+    const h = new Date();
+    const HOY = aTexto(h.getFullYear(), h.getMonth(), h.getDate());
+    //------------------------------------------------------------------------------------------------//
+    //solo se arma si estamos en la pagina del calendario
+    if ($('#cuerpoCalendario').length > 0){
+        cargarLiquidaciones();
     }
-
-    // recorre las liquidaciones una sola vez y anota que colores le tocan a cada fecha
-    function armarMarcas() {
-        marcas = {};
-        liquidaciones.forEach(function (liq) {
-            // rojo o azul van en el dia de vencimiento
-            asegurarMarca(liq.fecha_vencimiento);
-            if (liq.estado === 'vencida') {
-                marcas[liq.fecha_vencimiento].vencida = true;
-            } else {
-                marcas[liq.fecha_vencimiento].pendiente = true;
-            }
-            // verde va en el dia de liquidacion
-            asegurarMarca(liq.fecha_liquidacion);
-            marcas[liq.fecha_liquidacion].liquidar = true;
-        });
-    }
-
-    // un puntito de color
-    function punto(clase, titulo) {
-        return '<span class="d-inline-block rounded-circle ' + clase + '" style="width: 8px; height: 8px;" title="' + titulo + '"></span>';
-    }
-
-    // dibuja el mes que esta en las variables mes y anio
-    function dibujarMes() {
-        $('#tituloMes').text(nombresMes[mes] + ' ' + anio);
-        // lunes primero: getDay() da 0 para domingo, lo corro para que el lunes sea 0
-        var primerDia = new Date(anio, mes, 1).getDay();
-        var hueco = (primerDia + 6) % 7;
-        var diasMes = new Date(anio, mes + 1, 0).getDate();
-        var fechaHoy = armarFecha(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-        var filas = '';
-        var dia = 1;
-        // como mucho 6 semanas
-        for (var semana = 0; semana < 6; semana++) {
-            if (dia > diasMes) {
-                break;
-            }
-            filas += '<tr>';
-            for (var col = 0; col < 7; col++) {
-                if ((semana === 0 && col < hueco) || dia > diasMes) {
-                    // celda vacia (antes del dia 1 o despues del ultimo)
-                    filas += '<td class="bg-body-tertiary"></td>';
-                } else {
-                    var fecha = armarFecha(anio, mes, dia);
-                    var marca = marcas[fecha];
-                    var clase = 'text-center align-top p-1';
-                    if (fecha === fechaHoy) {
-                        clase = clase + ' table-active';
-                    }
-                    var puntos = '';
-                    var ojo = '';
-                    if (marca !== undefined) {
-                        if (marca.vencida) {
-                            puntos += punto('bg-danger', 'Vencidas');
-                        }
-                        if (marca.pendiente) {
-                            puntos += punto('bg-primary', 'Pendientes');
-                        }
-                        if (marca.liquidar) {
-                            puntos += punto('bg-success', 'Se liquidan este dia');
-                        }
-                        // el ojito aparece en cualquier dia que tenga alguna marca
-                        ojo = '<button type="button" class="btn btn-sm btn-link text-secondary p-0" id="verDia_' + fecha + '" title="Ver liquidaciones del dia"><i class="fas fa-eye"></i></button>';
-                    }
-                    filas += '<td class="' + clase + '" style="height: 72px;">'
-                        + '<div class="small fw-semibold">' + dia + '</div>'
-                        + '<div class="d-flex justify-content-center gap-1 my-1">' + puntos + '</div>'
-                        + ojo
-                        + '</td>';
-                    dia = dia + 1;
-                }
-            }
-            filas += '</tr>';
-        }
-        $('#cuerpoCalendario').html(filas);
-    }
-
-    // boton del menu lateral: trae las liquidaciones, arma el calendario y abre el modal
-    $('#verCalendario').on('click', function () {
-        hoy = new Date();
-        mes = hoy.getMonth();
-        anio = hoy.getFullYear();
-        $('#detalleDia').addClass('d-none');
+    //pide las liquidaciones al controlador y dibuja el calendario
+    function cargarLiquidaciones(){
         $.ajax({
             url: BASE + 'liquidaciones/calendario',
             method: 'GET',
             dataType: 'json',
-            cache: false,
-            success: function (response) {
+            success: function(response){
                 liquidaciones = response.liquidaciones;
-                armarMarcas();
-                dibujarMes();
-                bootstrap.Modal.getOrCreateInstance($('#modalCalendario')[0]).show();
+                dibujarCalendario();
             },
-            error: function () {
-                mensajes('Error en el servidor', 'error');
+            error: function(){
+                console.log('Error en el servidor al pedir las liquidaciones del calendario');
             }
         });
-    });
-
-    // mes anterior
-    $('#mesAnterior').on('click', function () {
-        mes = mes - 1;
-        if (mes < 0) {
-            mes = 11;
-            anio = anio - 1;
+    }
+    //------------------------------------------------------------------------------------------------//
+    //dibuja la grilla del mes que se esta viendo
+    function dibujarCalendario(){
+        const anio = fechaVista.getFullYear();
+        const mes = fechaVista.getMonth();
+        $('#tituloMes').text(MESES[mes] + ' ' + anio);
+        //la semana arranca en lunes: getDay() da 0 para domingo, lo corremos
+        const vacios = (new Date(anio, mes, 1).getDay() + 6) % 7;
+        const diasMes = new Date(anio, mes + 1, 0).getDate();
+        //contamos cuantas liquidaciones vencen cada dia
+        let cantidad = {};
+        liquidaciones.forEach(liquidacion => {
+            const fecha = liquidacion.fecha_vencimiento.substring(0, 10);
+            if (cantidad[fecha]){
+                cantidad[fecha]++;
+            }else{
+                cantidad[fecha] = 1;
+            }
+        });
+        //armamos las celdas: primero los vacios del principio, despues los dias
+        let celdas = [];
+        for (let i = 0; i < vacios; i++){
+            celdas.push('<td></td>');
         }
-        $('#detalleDia').addClass('d-none');
-        dibujarMes();
-    });
-
-    // mes siguiente
-    $('#mesSiguiente').on('click', function () {
-        mes = mes + 1;
-        if (mes > 11) {
-            mes = 0;
-            anio = anio + 1;
+        for (let dia = 1; dia <= diasMes; dia++){
+            const fecha = aTexto(anio, mes, dia);
+            let contenido = '<div>' + dia + '</div>';
+            //si ese dia vence alguna liquidacion ponemos el numerito y el ojito
+            if (cantidad[fecha]){
+                //rojo vencidas, verde las de hoy, azul las pendientes
+                let color;
+                if (fecha < HOY){
+                    color = 'danger';
+                }else if (fecha == HOY){
+                    color = 'success';
+                }else{
+                    color = 'primary';
+                }
+                contenido += `
+                            <span class="badge rounded-pill bg-${color}">${cantidad[fecha]}</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary border-0" id="verDia_${fecha}" data-fecha="${fecha}">
+                                <i class="fas fa-eye"></i>
+                            </button>`;
+            }
+            celdas.push('<td>' + contenido + '</td>');
         }
-        $('#detalleDia').addClass('d-none');
-        dibujarMes();
+        //completamos la ultima semana con celdas vacias
+        while (celdas.length % 7 != 0){
+            celdas.push('<td></td>');
+        }
+        //juntamos las celdas de a 7 por fila
+        let filas = '';
+        for (let i = 0; i < celdas.length; i += 7){
+            filas += '<tr>' + celdas.slice(i, i + 7).join('') + '</tr>';
+        }
+        $('#cuerpoCalendario').html(filas);
+    }
+    //------------------------------------------------------------------------------------------------//
+    //flechas para cambiar de mes
+    $('#mesAnterior').on('click', function(){
+        fechaVista.setMonth(fechaVista.getMonth() - 1);
+        dibujarCalendario();
     });
-
-    // ojito de un dia: lista las que se liquidan o vencen ese dia (vencidas incluidas)
-    $('#modalCalendario').on('click', '[id^="verDia_"]', function () {
-        var fecha = this.id.replace('verDia_', '');
-        var partes = fecha.split('-');
+    $('#mesSiguiente').on('click', function(){
+        fechaVista.setMonth(fechaVista.getMonth() + 1);
+        dibujarCalendario();
+    });
+    //------------------------------------------------------------------------------------------------//
+    //el ojito abre el modal con la lista de liquidaciones de ese dia (el cuerpo se arma de nuevo, por eso delegamos)
+    $('#cuerpoCalendario').on('click', 'button[id^="verDia_"]', function(){
+        const fecha = $(this).data('fecha');
+        //pasamos aaaa-mm-dd a dd/mm/aaaa para mostrarlo
+        const partes = fecha.split('-');
         $('#tituloDia').text('Liquidaciones del ' + partes[2] + '/' + partes[1] + '/' + partes[0]);
-        $('#listaDia').empty();
-        liquidaciones.forEach(function (liq) {
-            if (liq.fecha_liquidacion === fecha || liq.fecha_vencimiento === fecha) {
-                var item = $('<div class="list-group-item"></div>');
-                // nombre del empleado
-                item.append($('<div class="fw-semibold"></div>').text(liq.empleado));
-                // monto
-                item.append($('<small class="text-secondary d-block"></small>').text('$ ' + liq.monto));
-                // fecha de liquidacion y de vencimiento
-                item.append($('<small class="text-secondary d-block"></small>').text('Fecha de liquidación: ' + liq.fecha_liquidacion));
-                item.append($('<small class="text-secondary d-block"></small>').text('Fecha de vencimiento: ' + liq.fecha_vencimiento));
-                // por que sale en este dia
-                if (liq.fecha_liquidacion === fecha) {
-                    item.append($('<small class="text-success d-block"></small>').text('Se liquida este día'));
+        let items = '';
+        liquidaciones.forEach(liquidacion => {
+            //solo las de ese dia
+            if (liquidacion.fecha_vencimiento.substring(0, 10) == fecha){
+                //pasado por .text() para que no se rompa el html si trae simbolos raros
+                const empleado = $('<div>').text(liquidacion.empleado).html();
+                //estado segun la fecha
+                let estado;
+                if (fecha < HOY){
+                    estado = '<span class="badge bg-danger">Vencida</span>';
+                }else if (fecha == HOY){
+                    estado = '<span class="badge bg-success">Hoy</span>';
+                }else{
+                    estado = '<span class="badge bg-primary">Pendiente</span>';
                 }
-                if (liq.fecha_vencimiento === fecha) {
-                    item.append($('<small class="text-danger d-block"></small>').text('Vence este día'));
-                }
-                // estado con su color
-                var estado = $('<span class="badge mt-1"></span>');
-                if (liq.estado === 'vencida') {
-                    estado.addClass('bg-danger').text('Vencida');
-                } else {
-                    estado.addClass('bg-primary').text('Pendiente');
-                }
-                item.append(estado);
-                $('#listaDia').append(item);
+                items += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>${empleado} - $${liquidacion.monto}</span>
+                            ${estado}
+                        </li>`;
             }
         });
-        $('#detalleDia').removeClass('d-none');
+        $('#listaDia').html(items);
+        $('#modalListaDia').modal('show');
+    });
+    //------------------------------------------------------------------------------------------------//
+    //el boton imprimir abre una ventana con lo que se esta viendo en el modal y manda a imprimir
+    //copia el head de la pagina para usar los css que ya estan cargados en el html
+    $('#btnImprimirDia').on('click', function(){
+        //el titulo pasado por .text() para que no se rompa el html
+        const titulo = $('<div>').text($('#tituloDia').text()).html();
+        const ventana = window.open('', '_blank');
+        ventana.document.write(`
+            <html>
+                <head>${document.head.innerHTML}</head>
+                <body class="p-4">
+                    <h4>${titulo}</h4>
+                    ${$('#contenidoListaDia').html()}
+                </body>
+            </html>`);
+        ventana.document.close();
+        //esperamos a que la ventana termine de cargar (css incluidos) antes de imprimir, si no sale en blanco
+        ventana.onload = function(){
+            ventana.focus();
+            ventana.print();
+            ventana.close();
+        };
     });
 });

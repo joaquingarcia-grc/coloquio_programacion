@@ -29,6 +29,7 @@ $routes->post('/liquidaciones/recuperacion/(:num)','Liquidaciones::recuperacion/
 $routes->get('liquidaciones/api','Liquidaciones::api_liquidaciones');
 $routes->get('liquidaciones/api2','Liquidaciones::api_liquidaciones_borrados');
 $routes->get('liquidaciones/reporte', 'Liquidaciones::reporte');
+$routes->get('liquidaciones/calendario', 'Liquidaciones::api_calendario');
 
 
-
+$routes->get('calendario', 'Sueldos::index');

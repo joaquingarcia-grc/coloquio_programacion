@@ -44,6 +44,9 @@
                 <a class="menu-link" id="crgLiquidacion" href="<?php echo base_url()?>liquidaciones">
                     <i class="fas fa-file-invoice-dollar"></i> Liquidaciones
                 </a>
+                <a class="menu-link" id="crgCalendario" href="<?php echo base_url()?>calendario">
+                    <i class="fas fa-calendar-days"></i> Calendario
+                </a>
             </div>
         </nav>
         <div class="pie-lateral">

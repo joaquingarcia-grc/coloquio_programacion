@@ -129,6 +129,19 @@ class Liquidaciones extends BaseController{
        $datos = ['liquidaciones'=>$liquidaciones];
        return $this->response->setJSON($datos);
     }
+    public function api_calendario(){
+        //Esta funcion devuelve todas las liquidaciones del usuario (activas y vencidas) en formato json para el calendario
+        //withDeleted trae tambien las que tienen fecha_baja, que son las vencidas dadas de baja
+        $liquidaciones =    $this->liquidaciones->select('liquidaciones.*, empleados.denominacion AS empleado')
+                            ->where('liquidaciones.id_usuario', $this->sesion->id)
+                            ->join('empleados', 'empleados.id = liquidaciones.id_empleado')
+                            ->orderBy('liquidaciones.fecha_vencimiento','ASC')
+                            ->withDeleted()
+                            ->findAll();
+        //Armamos los datos y los devolvemos como json
+        $datos = ['liquidaciones'=>$liquidaciones];
+        return $this->response->setJSON($datos);
+    }
 
     public function reporte(){
         // id del usuario logueado (cambialo si en tu sesion se llama distinto)
