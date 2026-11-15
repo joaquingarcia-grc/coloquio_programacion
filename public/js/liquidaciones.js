@@ -203,7 +203,7 @@ $(document).ready(function(){
     //el boton cancelar limpia el formulario y cierra el modal de cargar
     $('#botonCancelarLiq').on('click', function(){
         $('#formLiquidacion')[0].reset();
-        $('#idEmpleadoLiq').val('');//el reset no limpia el hidden
+        $('#idEmpleadoLiq').val('');//el reset no limpia el hidden  
     });
 
     //los datos seran enviado una ves obtengamos la accion desde el boton del modal
