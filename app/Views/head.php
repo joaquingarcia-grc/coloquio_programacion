@@ -51,3 +51,32 @@
             <div><?php echo $usuario?></div>
         </div>
     </aside>
+    <!-- Barra lateral derecha del reporte -->
+    <aside id="panelReporte" class="panel-reporte">
+        <!-- titulo y cruz para cerrar -->
+        <div class="panel-reporte-cabecera">
+            <h6 class="mb-0">Liquidaciones por vencer</h6>
+            <button type="button" class="btn-close" id="cerrarReporte"></button>
+        </div>
+        <!-- contenido del reporte, esto es lo que se imprime -->
+        <div class="panel-reporte-cuerpo" id="contenidoReporte">
+            <p id="sinAvisos" class="text-muted d-none">No hay liquidaciones por vencer.</p>
+            <table class="table table-sm" id="tablaReporte">
+                <thead>
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Monto</th>
+                        <th>Vence</th>
+                        <th>Aviso</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoReporte"></tbody>
+            </table>
+        </div>
+        <!-- pie con el boton de imprimir abajo a la izquierda -->
+        <div class="panel-reporte-pie">
+            <button type="button" class="btn btn-sm btn-secondary" id="btnImprimirReporte">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+        </div>
+    </aside>

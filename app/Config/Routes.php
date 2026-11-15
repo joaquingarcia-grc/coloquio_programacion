@@ -11,9 +11,6 @@ $routes->post('/registro/validacion', 'Login::validacion');
 $routes->post('registro/insertar', 'Login::insertar');
 
 
-$routes->get('/usuarios', 'Usuarios::index');
-$routes->get('usuarios/api','Usuarios::api_usuarios');
-
 $routes->get('/empleados', 'Empleados::index');
 $routes->post('/empleados/insertar', 'Empleados::insertar');
 $routes->post('/empleados/borrar/(:num)','Empleados::borrar/$1');
@@ -31,15 +28,7 @@ $routes->get('/liquidaciones/papelera', 'Liquidaciones::papelera');
 $routes->post('/liquidaciones/recuperacion/(:num)','Liquidaciones::recuperacion/$1');
 $routes->get('liquidaciones/api','Liquidaciones::api_liquidaciones');
 $routes->get('liquidaciones/api2','Liquidaciones::api_liquidaciones_borrados');
+$routes->get('liquidaciones/reporte', 'Liquidaciones::reporte');
 
 
-$routes->get('/sueldos', 'Sueldos::index');
-$routes->post('usuarios/insertar', 'Salari::insertar');
-$routes->post('usuarios/validacion', 'Salari::validacion');
-$routes->get('usuarios/sesion', 'Salari::sesion');
-$routes->get('liquidaciones/api','Salari::api_liquidaciones');
-$routes->post('/usuarios/salir', 'Salari::salir');
-$routes->get('liquidaciones/avisos','Salari::avisos');
-$routes->post('/empleados/insertar', 'Salari::cargarEmpleado');
-$routes->get('liquidaciones/calendario', 'Salari::calendario');
 
