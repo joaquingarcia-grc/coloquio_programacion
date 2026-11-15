@@ -4,10 +4,11 @@ namespace App\Controllers;
 use App\Models\UsuariosModel;
 use App\Models\EmpleadosModel;
 use App\Models\LiquidacionesModel;
+use App\Models\ActividadesModel;
 
 class Liquidaciones extends BaseController{
     
-
+    protected $actividades;
     protected $sesion;
     protected $usuarios;
     protected $empleados;
@@ -16,6 +17,7 @@ class Liquidaciones extends BaseController{
     public function __construct(){
         //Se inicia la sesión y se instancian los modelos
         $this->sesion = session();
+        $this->actividades = new ActividadesModel();
         $this->usuarios = new UsuariosModel();
         $this->empleados = new EmpleadosModel();
         $this->liquidaciones = new LiquidacionesModel();
@@ -57,8 +59,16 @@ class Liquidaciones extends BaseController{
                 'fecha_vencimiento' => $fecha_vencimiento,
                 'id_usuario' => $id_logueado
             ]);
-            //damos una respuesta luego de guardar, con el id nuevo
+            //id de la liquidacion que se acaba de guardar
             $id = $this->liquidaciones->getInsertID();
+            // Se guarda la accion: quien la hizo, sobre que tabla, que id y que accion fue
+            $this->actividades->save([
+                'id_usuario' => $id_logueado,
+                'tabla' => 'liquidaciones',
+                'id_dato' => $id,
+                'accion' => 'alta'
+            ]);
+            //damos una respuesta luego de guardar, con el id nuevo
             echo json_encode(['exito' => true, 'id' => $id, 'mensaje' => 'Liquidación cargada exitosamente']);
             exit;
         }
@@ -75,11 +85,51 @@ class Liquidaciones extends BaseController{
             exit;
         }else{//Es el dueño: se borra (borrado lógico, va a la papelera)
             $this->liquidaciones->delete($id);
+            // Se guarda la accion: quien la hizo, sobre que tabla, que id y que accion fue
+            $this->actividades->save([
+                'id_usuario' => $id_logueado,
+                'tabla' => 'liquidaciones',
+                'id_dato' => $id,
+                'accion' => 'baja'
+            ]);
             echo json_encode(['exito' => true, 'mensaje' => 'Borrado exitosamente']);
             exit;
         }
-    }    
-
+    }
+    public function actualizar($id){
+        //Esto nos indica que esperamos peticiones json
+        header('Content-Type: application/json');
+        // Datos que llegan por POST
+        $id_empleado = $this->request->getPost('id_empleado');
+        $monto = $this->request->getPost('monto');
+        $fecha_vencimiento = $this->request->getPost('fecha_vencimiento');
+        // Id del usuario logueado
+        $id_logueado = $this->sesion->get('id');
+        // Buscamos el empleado: tiene que existir (no borrado) y ser del usuario logueado
+        $empleado = $this->empleados->where('id_usuario', $id_logueado)->find($id_empleado);
+        if (!$empleado) {
+            echo json_encode(['exito' => false, 'mensaje' => 'El empleado no existe']);
+            exit;
+        }else{
+            // Se actualiza la liquidacion
+            $this->liquidaciones->update($id, [
+                'id_empleado' => $id_empleado,
+                'monto' => $monto,
+                'fecha_vencimiento' => $fecha_vencimiento,
+                'id_usuario' => $id_logueado
+            ]);
+            // Se guarda la accion: quien la hizo, sobre que tabla, que id y que accion fue
+            $this->actividades->save([
+                'id_usuario' => $id_logueado,
+                'tabla' => 'liquidaciones',
+                'id_dato' => $id,
+                'accion' => 'modificacion'
+            ]);
+            //damos una respuesta luego de actualizar
+            echo json_encode(['exito' => true, 'mensaje' => 'Liquidación actualizada exitosamente']);
+            exit;
+        }
+    }  
     public function papelera(){
 
         $usr_logueado = $this->sesion->get('denominacion');
