@@ -6,6 +6,7 @@
     <title><?php echo $titulo?></title>
     <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="<?php echo base_url();?>css/login.css">
+	<link rel="shortcut icon" href="<?php echo base_url()?>imagenes/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="global-container">

@@ -1,69 +1,107 @@
 html, body {
-    height: 100%;
+    min-height: 100%;
 }
 
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+    color: #1f2430;
 }
 
+/* ocupa toda la altura de la pantalla y si el contenido es mas alto crece, asi no se corta */
 .global-container {
-    height: 100%;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #eef2f7 0%, #dde5ef 100%);
+    background: #f4f5f9;
 }
 
+/* tarjeta blanca con borde finito y una sombra casi invisible */
 .login-form {
     width: 360px;
+    max-width: calc(100% - 40px);
     margin: 20px;
-    border: none;
-    border-top: 4px solid #1f3a5f;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(31, 58, 95, 0.15);
+    background: #ffffff;
+    border: 1px solid #e4e6ee;
+    border-top: 4px solid #4f46e5;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(20, 25, 45, 0.08);
+}
+
+/* el registro es mas ancho que alto, el login queda angosto */
+.login-form:has(#formularioRegistro) {
+    width: 640px;
 }
 
 .login-form .card-body {
-    padding: 36px 32px 32px;
+    padding: 32px 32px 28px;
 }
 
 .card-title {
     font-weight: 600;
     font-size: 24px;
-    color: #1f3a5f;
+    color: #1f2430;
     margin-bottom: 4px;
 }
 
 .card-subtitle {
     font-size: 13px;
-    color: #6b7a8d;
+    color: #6b7280;
     margin-bottom: 0;
 }
 
 form {
-    margin-top: 28px;
+    margin-top: 24px;
     font-size: 14px;
+}
+
+/* en el registro los campos van en dos columnas para que no quede tan alto */
+#formularioRegistro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+}
+
+#formularioRegistro .mb-3 {
+    margin-bottom: 0 !important;
+}
+
+/* el aviso, la contraseña y los botones ocupan todo el ancho */
+#formularioRegistro > p,
+#formularioRegistro > .mb-3:nth-of-type(3),
+#formularioRegistro > .botones {
+    grid-column: 1 / -1;
+}
+
+#formularioRegistro > p {
+    margin-bottom: 0;
+}
+
+#formularioRegistro > .botones {
+    margin-top: 6px;
 }
 
 .form-label {
     font-size: 13px;
-    font-weight: 500;
-    color: #3b4a5e;
+    font-weight: 600;
+    color: #6b7280;
     margin-bottom: 6px;
 }
 
 .form-control {
     font-size: 14px;
     padding: 10px 12px;
-    border: 1px solid #ced6e0;
-    border-radius: 6px;
-    background-color: #f9fafc;
+    border: 1px solid #e4e6ee;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* al enfocar se marca en indigo */
 .form-control:focus {
-    background-color: #fff;
-    border-color: #1f3a5f;
-    box-shadow: 0 0 0 3px rgba(31, 58, 95, 0.15);
+    background-color: #ffffff;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.10);
 }
 
 .botones {
@@ -75,34 +113,42 @@ form {
 .botones .btn {
     flex: 1;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     padding: 10px 0;
-    border-radius: 6px;
-    transition: background-color 0.2s, color 0.2s;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .btn-iniciar {
-    background-color: #1f3a5f;
-    border: 1px solid #1f3a5f;
-    color: #fff;
+    background-color: #4f46e5;
+    border: 1px solid #4f46e5;
+    color: #ffffff;
 }
 
 .btn-iniciar:hover {
-    background-color: #162c49;
-    border-color: #162c49;
-    color: #fff;
+    background-color: #4338ca;
+    border-color: #4338ca;
+    color: #ffffff;
 }
 
+/* el cancelar va liviano, solo con borde */
 .btn-cancelar {
     background-color: transparent;
-    border: 1px solid #ced6e0;
-    color: #4a5a6e;
+    border: 1px solid #e4e6ee;
+    color: #1f2430;
 }
 
 .btn-cancelar:hover {
-    background-color: #eef2f7;
-    border-color: #b6c1cf;
-    color: #1f3a5f;
+    background-color: #f4f5f9;
+    border-color: #d5d8e3;
+    color: #1f2430;
+}
+
+/* en celular el registro vuelve a una sola columna */
+@media (max-width: 640px) {
+    #formularioRegistro {
+        grid-template-columns: 1fr;
+    }
 }
 
 #mensaje {
@@ -117,8 +163,8 @@ form {
     padding: 10px 16px;
     margin: 0;
     border: none;
-    border-radius: 6px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(20, 25, 45, 0.12);
 }
 
 #mensaje.alert-success {

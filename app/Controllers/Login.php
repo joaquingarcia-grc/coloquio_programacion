@@ -3,19 +3,25 @@
 namespace App\Controllers;
 use App\Models\UsuariosModel;
 
+//acá está el controlador del login (ingreso, registro de usuarios nuevos y salida)
 class Login extends BaseController{
 
+    //acá se declara la variable que usa todo el controlador
     protected $usuarios;
 
+    //acá se crea el modelo de usuarios
     public function __construct() {
         $this->usuarios = new UsuariosModel();
     }
+    //acá se arma la página del login
     public function index(){   
 
+        //acá armo los datos que van a la vista
         $datos = ['titulo' => 'Panel de logueo',];
         echo view('login/login',$datos);
     }
 
+    //acá se valida el ingreso del usuario
     public function validacion(){    
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
@@ -37,9 +43,11 @@ class Login extends BaseController{
                     'id' => $datosUsuario['id'],
                     'denominacion' => $datosUsuario['denominacion']
                 ];
+                //acá se inicia la sesión con esos datos
                 $sesion = session();
                 $sesion->set($data_sesion);
                 
+                //acá devuelvo la respuesta al js, con la vista a la que tiene que ir
                 echo json_encode(['exito' => true, 'mensaje' => 'Bienvenido', 'redirigir' => base_url('/calendario')]);
                 exit;              
             }else{
@@ -53,6 +61,7 @@ class Login extends BaseController{
         }
     }
 
+    //acá se arma la página de registro de usuario nuevo
     public function nuevo(){
 
         //Datos que se pasan a la vista
@@ -61,6 +70,7 @@ class Login extends BaseController{
         //Armamos la página: encabezado, formulario de usuario nuevo y pie
         echo view('login/nuevo',$datos);
     }
+    //acá se guarda un usuario nuevo
     public function insertar(){
         //Esto nos indica que esperamos peticiones json
         header('Content-Type: application/json');
@@ -73,6 +83,7 @@ class Login extends BaseController{
             echo json_encode(['exito' => false, 'mensaje' => 'Faltan datos obligatorios']);
             exit;
         }
+        //acá están las validaciones de la contraseña
         //Validaciones de la contraseña que exista, que tenga al menos 8 caracteres
         if (empty($pswd)) {
             echo json_encode(['exito' => false, 'mensaje' => 'La contraseña es obligatoria']);
@@ -88,16 +99,20 @@ class Login extends BaseController{
             echo json_encode(['exito' => false, 'mensaje' => 'La contraseña debe tener al menos un carácter especial']);
             exit;
         }
+        //acá reviso si el usuario ya existe
         //Buscamos si ya existe un usuario con esa denominacion, incluyendo los de la papeler
         $datoUsuario = $this->usuarios->where('denominacion', $denominacion)->withDeleted()->first();
         //Si no existe, encriptamos la contraseña y guardamos el usuario
         if (empty($datoUsuario)){
+            //acá se encripta la contraseña
             $hash = password_hash($pswd ,PASSWORD_DEFAULT);
+            //acá se guarda el usuario nuevo
             $this->usuarios->save([
                 'denominacion' => $denominacion,
                 'correo'  => $correo,
                 'pswd' => $hash
             ]);
+            //acá devuelvo la respuesta al js
             echo json_encode(['exito' => true, 'mensaje' => ' Usuario creado con éxito']);
             exit;
         }else{
@@ -112,6 +127,7 @@ class Login extends BaseController{
         
     }
 
+    //acá se cierra la sesión del usuario
     public function salir(){
         //Cerramos la sesion, borrando todos sus datos
         $sesion = session();
