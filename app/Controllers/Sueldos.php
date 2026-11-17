@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\UsuariosModel;
 use App\Models\EmpleadosModel;
 use App\Models\LiquidacionesModel;
+use App\Models\ActividadesModel;
 
 class Sueldos extends BaseController{
 
@@ -11,10 +12,12 @@ class Sueldos extends BaseController{
     protected $usuarios;
     protected $empleados;
     protected $liquidaciones;
+    protected $actividades;
 
     public function __construct(){
         //Se inicia la sesión y se instancian los modelos
         $this->sesion = session();
+        $this->actividades = new ActividadesModel();
         $this->usuarios = new UsuariosModel();
         $this->empleados = new EmpleadosModel();
         $this->liquidaciones = new LiquidacionesModel();
@@ -147,5 +150,59 @@ class Sueldos extends BaseController{
         }
     }
 
-
+    public function api_actividad(){
+        // Verificamos que haya una sesión iniciada: si no existe el id en la sesión,
+        // lo mandamos al registro para que no pueda entrar a esta ruta sin loguearse
+        if(!isset($this->sesion->id)){
+            return redirect()->to(base_url() . "registro/");
+        }
+        //Esta funcion devuelve toda la actividad del usuario logueado en formato json
+        //Traemos la actividad del usuario, de la mas nueva a la mas vieja
+        $actividades =  $this->actividades->where('id_usuario', $this->sesion->id)
+                        ->orderBy('id','DESC')
+                        ->findAll();
+        //Aca guardamos las actividades ya armadas con el empleado al que pertenece cada una
+        $resultado = [];
+        foreach ($actividades as $actividad) {
+            //el empleado es a quien le pertenece el cambio
+            $nombre_empleado = '';
+            if ($actividad['tabla'] == 'liquidaciones') {
+                //withDeleted para encontrarla tambien si se dio de baja
+                $liquidacion = $this->liquidaciones->withDeleted()->find($actividad['id_dato']);
+                if ($liquidacion) {
+                    //buscamos el empleado de la liquidacion para mostrar el nombre
+                    $empleado = $this->empleados->withDeleted()->find($liquidacion['id_empleado']);
+                    if ($empleado) {
+                        $nombre_empleado = $empleado['denominacion'];
+                    } else {
+                        $nombre_empleado = 'Empleado no encontrado';
+                    }
+                } else {
+                    $nombre_empleado = 'Liquidacion no encontrada';
+                }
+            } else {
+                if ($actividad['tabla'] == 'empleados') {
+                    //withDeleted para encontrarlo tambien si se dio de baja
+                    $empleado = $this->empleados->withDeleted()->find($actividad['id_dato']);
+                    if ($empleado) {
+                        $nombre_empleado = $empleado['denominacion'];
+                    } else {
+                        $nombre_empleado = 'Empleado no encontrado';
+                    }
+                }
+            }
+            //armamos cada fila con lo que guarda la tabla actividades mas el empleado
+            $resultado[] = [
+                'id'          => $actividad['id'],
+                'tabla'       => $actividad['tabla'],
+                'id_dato'     => $actividad['id_dato'],
+                'accion'      => $actividad['accion'],
+                'fecha_alta'  => $actividad['fecha_alta'],
+                'empleado'    => $nombre_empleado
+            ];
+        }
+        //Armamos los datos y los devolvemos como json
+        $datos = ['actividades'=>$resultado];
+        return $this->response->setJSON($datos);
+    }
 }

@@ -2,12 +2,16 @@ $(document).ready(function(){
     //------------------------------------------------------------------------------------------------//
     //reporte de liquidaciones por vencer
     cargarReporte();
+    //cada 30 segundos vuelve a pedir el reporte solo, para no tener que recargar la pagina
+    setInterval(cargarReporte, 30000);
     //esta funcion pide el reporte al controlador y actualiza el numerito de la campanita
     function cargarReporte(){
         $.ajax({
             url: BASE + 'liquidaciones/reporte',
             method: 'GET',
             dataType: 'json',
+            //cache false para que el navegador no me devuelva el reporte viejo
+            cache: false,
             success: function(response){
                 //armamos las filas del reporte
                 let filasReporte = '';

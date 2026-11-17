@@ -21,5 +21,7 @@
     <script src="<?php echo base_url();?>js/login.js"></script>
     <script src='<?php echo base_url();?>js/reporte.js'></script>
     <script src='<?php echo base_url();?>js/calculadora.js'></script>
+    <script src='<?php echo base_url();?>js/actividad.js'></script>
+
 </body>
 </html>

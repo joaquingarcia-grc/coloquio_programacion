@@ -36,3 +36,4 @@ $routes->get('calendario', 'Sueldos::index');
 $routes->get('actividad', 'Sueldos::actividad');
 $routes->get('configuracion', 'Sueldos::configuracion');
 $routes->post('usuarios/actualizar/(:num)', 'Sueldos::actualizar/$1');
+$routes->get('actividades/api','Sueldos::api_actividad');

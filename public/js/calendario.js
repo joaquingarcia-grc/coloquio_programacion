@@ -42,12 +42,18 @@ $(document).ready(function(){
         const diasMes = new Date(anio, mes + 1, 0).getDate();
         //contamos cuantas liquidaciones vencen cada dia
         let cantidad = {};
+        //y guardamos los dias que tienen alguna liquidacion borrada
+        let borradas = {};
         liquidaciones.forEach(liquidacion => {
             const fecha = liquidacion.fecha_vencimiento.substring(0, 10);
             if (cantidad[fecha]){
                 cantidad[fecha]++;
             }else{
                 cantidad[fecha] = 1;
+            }
+            //si tiene fecha_baja es porque fue borrada
+            if (liquidacion.fecha_baja){
+                borradas[fecha] = true;
             }
         });
         //armamos las celdas: primero los vacios del principio, despues los dias
@@ -69,9 +75,18 @@ $(document).ready(function(){
                 }else{
                     color = 'primary';
                 }
+                //color del ojito: gris normal, rojo si ese dia hay alguna borrada
+                let colorOjo;
+                if (borradas[fecha]){
+                    colorOjo = 'danger';
+                    //el numerito tambien se pone rojo
+                    color = 'danger';
+                }else{
+                    colorOjo = 'secondary';
+                }
                 contenido += `
                             <span class="badge rounded-pill bg-${color}">${cantidad[fecha]}</span>
-                            <button type="button" class="btn btn-sm btn-outline-secondary border-0" id="verDia_${fecha}" data-fecha="${fecha}">
+                            <button type="button" class="btn btn-sm btn-outline-${colorOjo} border-0" id="verDia_${fecha}" data-fecha="${fecha}">
                                 <i class="fas fa-eye"></i>
                             </button>`;
             }
@@ -111,20 +126,32 @@ $(document).ready(function(){
             if (liquidacion.fecha_vencimiento.substring(0, 10) == fecha){
                 //pasado por .text() para que no se rompa el html si trae simbolos raros
                 const empleado = $('<div>').text(liquidacion.empleado).html();
-                //estado segun la fecha
-                let estado;
-                if (fecha < HOY){
-                    estado = '<span class="badge bg-danger">Vencida</span>';
-                }else if (fecha == HOY){
-                    estado = '<span class="badge bg-success">Hoy</span>';
+                //si tiene fecha_baja es porque fue borrada: se marca en rojo y se avisa
+                if (liquidacion.fecha_baja){
+                    items += `
+                            <li class="list-group-item list-group-item-danger">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>${empleado} - $${liquidacion.monto}</span>
+                                    <span class="badge bg-danger">Borrada</span>
+                                </div>
+                                <small><i class="fas fa-triangle-exclamation"></i> Este dato fue borrado</small>
+                            </li>`;
                 }else{
-                    estado = '<span class="badge bg-primary">Pendiente</span>';
+                    //estado segun la fecha
+                    let estado;
+                    if (fecha < HOY){
+                        estado = '<span class="badge bg-danger">Vencida</span>';
+                    }else if (fecha == HOY){
+                        estado = '<span class="badge bg-success">Hoy</span>';
+                    }else{
+                        estado = '<span class="badge bg-primary">Pendiente</span>';
+                    }
+                    items += `
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>${empleado} - $${liquidacion.monto}</span>
+                                ${estado}
+                            </li>`;
                 }
-                items += `
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>${empleado} - $${liquidacion.monto}</span>
-                            ${estado}
-                        </li>`;
             }
         });
         $('#listaDia').html(items);
