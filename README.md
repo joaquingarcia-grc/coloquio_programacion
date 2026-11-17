@@ -1,61 +1,117 @@
-# CodeIgniter 4 Framework
+# Sistema de Liquidación de Sueldos
 
-## What is CodeIgniter?
+Sistema web desarrollado para la gestión de empleados y liquidaciones de sueldos. Permite administrar registros, realizar el seguimiento de las fechas de acreditación, consultar reportes de vencimientos y visualizar las liquidaciones mediante un calendario.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+**Desarrollado por:** Joaquín García.
 
-This repository holds the distributable version of the framework.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+---
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Características principales
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+### Gestión de usuarios
+- Registro de nuevos usuarios sin necesidad de iniciar sesión previamente.
+- Inicio y cierre de sesión.
+- Edición de los datos de la cuenta desde el apartado de configuración.
+- Asociación de los registros con el usuario que los genera.
 
-## Important Change with index.php
+### Gestión de empleados
+- Alta de empleados.
+- Registro de denominación (apellido y nombre), correo electrónico y área.
+- Modificación de información.
+- Baja lógica de registros.
+- Asociación de cada empleado con el usuario que lo registró.
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+### Gestión de liquidaciones
+- Registro de liquidaciones asociadas a un empleado.
+- Asociación de cada liquidación con el usuario responsable de su carga.
+- Registro del monto correspondiente.
+- Registro de fecha de emisión y fecha de acreditación.
+- Modificación y baja lógica de liquidaciones.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+### Reportes y vencimientos
+- Visualización de liquidaciones próximas a su fecha de acreditación.
+- Avisos anticipados de uno o dos días antes del vencimiento.
+- Identificación de liquidaciones que deben acreditarse durante el día.
+- Actualización de los avisos cuando una liquidación es eliminada.
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### Calendario
+- Visualización de liquidaciones organizadas por fecha.
+- Consulta de las liquidaciones correspondientes a un día determinado.
+- Identificación de liquidaciones pendientes y aquellas que ya no están pendientes.
+- Consulta de registros históricos, incluyendo liquidaciones eliminadas.
 
-## Repository Management
+### Registro de actividad
+- Seguimiento de las acciones realizadas por los usuarios.
+- Registro de altas, modificaciones y bajas.
+- Consulta del historial de actividad mediante tablas dinámicas.
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+### Seguridad y privacidad
+- Almacenamiento seguro de contraseñas mediante `password_hash()` de PHP.
+- Gestión de sesiones mediante CodeIgniter 4.
+- Separación de información por usuario.
+- Cada usuario puede consultar y gestionar únicamente los registros que le pertenecen.
+- Eliminación lógica (*Soft Delete*), conservando los registros dados de baja.
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+---
 
-## Contributing
+## Tecnologías utilizadas
 
-We welcome contributions from the community.
+### Backend
+- PHP
+- CodeIgniter 4
+- MySQL
 
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/CONTRIBUTING.md) section in the development repository.
+### Frontend
+- HTML5
+- CSS3
+- JavaScript
+- jQuery
+- AJAX
+- Bootstrap
+- Bootstrap Icons
+- DataTables
+- DataTables Buttons
 
-## Server Requirements
+### Herramientas y funcionalidades
+- CodeIgniter Sessions.
+- CodeIgniter Query Builder.
+- Consultas SQL y relaciones entre tablas.
+- Gestión de contraseñas mediante `password_hash()`.
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+---
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+## Interfaz y componentes
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+El sistema utiliza DataTables para la visualización y gestión de información en los módulos de:
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+- Empleados.
+- Liquidaciones.
+- Actividad.
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+Los reportes de vencimientos se presentan mediante un panel lateral independiente, facilitando la consulta de avisos y próximas acreditaciones.
+
+El calendario permite consultar la información de las liquidaciones según la fecha seleccionada.
+
+---
+
+## Documentación de referencia
+
+**CodeIgniter 4**
+- [Sessions](https://codeigniter.com/user_guide/libraries/sessions.html)
+- [Query Builder - JOIN](https://codeigniter.com/user_guide/database/query_builder.html#join)
+
+**DataTables**
+- [Layout](https://datatables.net/reference/option/layout)
+- [Buttons - Action](https://datatables.net/reference/feature/buttons.buttons.action)
+- [Buttons - Usage](https://datatables.net/manual/extensions/buttons/usage)
+
+**PHP**
+- [password_hash()](https://www.php.net/manual/es/function.password-hash.php)
+
+---
+
+## Autor
+
+**Joaquín García**
+
+Proyecto desarrollado utilizando CodeIgniter 4 y tecnologías web.
