@@ -212,6 +212,7 @@ $(document).ready(function(){
             ventana.focus();
             ventana.print();//manda a imprimir
             ventana.close();//cierra la ventana
+            //uso de ia: https://claude.ai/chat/641212ae-0c6f-4016-b1a9-0ce5c4638177
         };
     });
 });
