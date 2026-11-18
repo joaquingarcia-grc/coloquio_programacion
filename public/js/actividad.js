@@ -97,7 +97,7 @@ $(document).ready(function(){
                                     text: 'imprimir <i class="bi bi-printer-fill"></i>',
                                     titleAttr: 'imprimir tabla'
                                 }]
-                        }
+                        }//https://datatables.net/examples/buttons/html5/simple.html url de referencias
                     },
                     //acá se ordena por la fecha
                     //ordenada por la fecha, de la mas nueva a la mas vieja

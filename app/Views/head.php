@@ -15,7 +15,7 @@
 <body>
     <!-- Barra superior -->
     <header class="barra-superior">
-        <a class="marca" href='<?php echo base_url()?>/calendario'>Panel Administrativo</a>
+        <a class="marca" href='<?php echo base_url()?>calendario'>Panel Administrativo</a>
         <button class="boton-menu" id="botonMenu" type="button">
             <i class="fas fa-bars"></i>
         </button>

@@ -132,7 +132,7 @@ $(document).ready(function(){
                                     action: function () {
                                         window.location.href = BASE + 'liquidaciones/papelera';
                                     }
-                                }]
+                                }]//https://datatables.net/examples/buttons/html5/simple.html url de referencias
                         }
                     },
                     //acá se ordena por la primera columna
