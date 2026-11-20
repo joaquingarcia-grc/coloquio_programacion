@@ -34,25 +34,13 @@ $(document).ready(function(){
                 let filasActividad = '';
                 //acá recorro las actividades y armo las filas
                 response.actividades.forEach(actividad => {
-                    //acá elijo el color de la acción
-                    //color del badge segun la accion
-                    let colorAccion;
-                    if (actividad.accion == 'alta'){
-                        colorAccion = 'bg-success';
-                    }else if (actividad.accion == 'modificacion'){
-                        colorAccion = 'bg-warning text-dark';
-                    }else if (actividad.accion == 'baja'){
-                        colorAccion = 'bg-danger';
-                    }else{
-                        colorAccion = 'bg-secondary';
-                    }
                     //acá va la fila de la actividad
-                    // una fila por cada actividad
+                    // una fila por cada actividad (la acción va en texto simple, sin color)
                     filasActividad += `
                                     <tr>
                                         <td>${actividad.tabla}</td>
                                         <td>${actividad.empleado}</td>
-                                        <td><span class="badge ${colorAccion}">${actividad.accion}</span></td>
+                                        <td>${actividad.accion}</td>
                                         <td>${actividad.fecha_alta}</td>
                                     </tr>`;
                 });
@@ -95,7 +83,9 @@ $(document).ready(function(){
                                 {
                                     extend: 'print',
                                     text: 'imprimir <i class="bi bi-printer-fill"></i>',
-                                    titleAttr: 'imprimir tabla'
+                                    titleAttr: 'imprimir tabla',
+                                    //acá va el título que sale arriba al imprimir, con el usuario logueado (viene de USR)
+                                    title: 'Actividad de ' + USR
                                 }]
                         }//https://datatables.net/examples/buttons/html5/simple.html url de referencias
                     },

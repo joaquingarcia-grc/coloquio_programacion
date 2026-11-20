@@ -13,6 +13,7 @@
     <script>
         const BASE = "<?php echo base_url();?>";
         const VEMP = <?= json_encode($empleados) ?>;
+        const USR = <?= json_encode(session()->get('denominacion')); ?>;
     </script>
     <script src='<?php echo base_url();?>js/liquidaciones.js'></script>
     <script src='<?php echo base_url();?>js/empleados.js'></script>

@@ -245,7 +245,6 @@ $(document).ready(function(){
                 if (response.exito){
                     mensajes(response.mensaje,'success');
                     $('#formEmpleado')[0].reset();
-                    $('#modalEmpleado').modal('hide');//ocultamos el modal de guardar
                     $('#tablaDatosEmp').DataTable().destroy();//se destruye la tabla vieja para armarla de nuevo
                     cargarTablaEmpleados();
                 //ya existe y está en la papelera

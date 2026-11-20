@@ -275,7 +275,6 @@ $(document).ready(function(){
                     mensajes(response.mensaje,'success');
                     $('#formLiquidacion')[0].reset();
                     $('#idEmpleadoLiq').val('');//el reset no limpia el hidden
-                    $('#modalLiquidacion').modal('hide');//ocultamos el modal de guardar
                     $('#tablaDatosLiq').DataTable().destroy();//se destruye la tabla vieja para armarla de nuevo
                     cargarTablaLiquidaciones();
                 //ya existe y está en la papelera
